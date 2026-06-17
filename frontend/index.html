@@ -548,7 +548,7 @@ nav {
 // Change this to your Render/Railway URL after deployment
 const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:5000'
-  : ''; // same origin in production (served by Flask)
+  : 'https://cyberpredict-api.onrender.com'; // same origin in production (served by Flask)
 
 let currentUser = null;
 let token = localStorage.getItem('cp_token');
