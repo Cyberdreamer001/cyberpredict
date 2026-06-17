@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberPredict — Football Predictions</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --green:#00a651; --green-dark:#007a3d; --green-light:#00c962;
+  --gold:#f5a623; --gold-dark:#e08c00;
+  --black:#0d0d0d; --dark:#151515; --dark2:#1e1e1e; --dark3:#252525; --dark4:#2e2e2e;
+  --text:#f0f0f0; --muted:#a0a0a0; --red:#e63946;
+  --radius:10px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--black); color:var(--text); min-height:100vh; }
+
+/* NAV */
+nav {
+  background:var(--dark); border-bottom:2px solid var(--green);
+  padding:0 16px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:200; height:56px; gap:10px;
+}
+.logo { display:flex; align-items:center; gap:8px; font-size:20px; font-weight:900; text-decoration:none; color:#fff; white-space:nowrap; }
+.logo-icon { width:34px; height:34px; background:var(--green); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.logo em { color:var(--green); font-style:normal; }
+.nav-right { display:flex; align-items:center; gap:8px; }
+.nav-btn { background:none; border:1px solid #333; color:var(--muted); padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; }
+.nav-btn:hover { border-color:var(--green); color:#fff; }
+.nav-btn.vip { background:linear-gradient(135deg,#f5a623,#e08c00); color:#000; border:none; }
+.nav-btn.active-user { background:rgba(0,166,81,.15); border-color:var(--green); color:var(--green-light); }
+
+/* HERO */
+.hero { background:linear-gradient(180deg,#081a0e 0%,var(--black) 100%); padding:32px 16px 24px; text-align:center; border-bottom:1px solid #1a3020; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-80px; left:50%; transform:translateX(-50%); width:500px; height:400px; background:radial-gradient(circle,rgba(0,166,81,.1) 0%,transparent 70%); pointer-events:none; }
+.live-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(0,166,81,.12); border:1px solid rgba(0,166,81,.25); color:var(--green-light); font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; margin-bottom:12px; letter-spacing:.5px; text-transform:uppercase; }
+.live-dot { width:7px; height:7px; border-radius:50%; background:var(--green-light); animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.hero h1 { font-size:32px; font-weight:900; line-height:1.1; margin-bottom:8px; }
+.hero h1 em { font-style:normal; color:var(--green); }
+.hero p { color:var(--muted); font-size:14px; max-width:480px; margin:0 auto 20px; }
+.hero-stats { display:flex; justify-content:center; gap:28px; flex-wrap:wrap; }
+.h-stat .num { font-size:24px; font-weight:900; color:var(--green); }
+.h-stat .lbl { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+
+/* TICKER */
+.ticker { background:var(--dark3); border-bottom:1px solid #222; padding:8px 16px; display:flex; gap:20px; overflow-x:auto; scrollbar-width:none; }
+.ticker::-webkit-scrollbar { display:none; }
+.t-item { display:flex; align-items:center; gap:6px; white-space:nowrap; font-size:12px; font-weight:600; color:var(--muted); }
+.t-item span { font-size:15px; }
+
+/* TABS */
+.tabs { background:var(--dark); border-bottom:1px solid #222; display:flex; overflow-x:auto; scrollbar-width:none; padding:0 8px; }
+.tabs::-webkit-scrollbar { display:none; }
+.tab { padding:14px 16px; background:none; border:none; color:var(--muted); font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; border-bottom:3px solid transparent; transition:all .2s; text-transform:uppercase; letter-spacing:.5px; }
+.tab.active { color:var(--green); border-bottom-color:var(--green); }
+.tab.vip-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab:hover:not(.active) { color:var(--text); }
+
+/* LAYOUT */
+.layout { display:flex; max-width:1280px; margin:0 auto; }
+.sidebar { width:200px; flex-shrink:0; background:var(--dark); border-right:1px solid #1e1e1e; padding:12px 0; }
+.sb-title { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; padding:10px 14px 4px; }
+.sb-item { display:flex; align-items:center; gap:8px; padding:8px 14px; cursor:pointer; font-size:12px; color:var(--muted); border-left:3px solid transparent; transition:all .15s; }
+.sb-item:hover { background:var(--dark3); color:var(--text); }
+.sb-item.active { background:rgba(0,166,81,.08); color:var(--green); border-left-color:var(--green); }
+.content { flex:1; padding:14px; min-width:0; }
+.rsidebar { width:240px; flex-shrink:0; padding:12px; border-left:1px solid #1e1e1e; background:var(--dark); }
+
+/* SECTION HEADER */
+.sec-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.sec-title { font-size:14px; font-weight:700; }
+.pill { font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; }
+.pill.green { background:var(--green); color:#000; }
+.pill.gold { background:rgba(245,166,35,.15); color:var(--gold); border:1px solid rgba(245,166,35,.3); }
+
+/* MATCH CARD */
+.card { background:var(--dark2); border:1px solid #272727; border-radius:var(--radius); margin-bottom:10px; overflow:hidden; transition:border-color .2s; }
+.card:hover { border-color:#383838; }
+.card-head { background:var(--dark3); padding:7px 14px; display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--muted); }
+.league-lbl { display:flex; align-items:center; gap:6px; font-weight:700; }
+.time-lbl { color:var(--green-light); font-weight:700; }
+.card-body { padding:12px 14px; }
+.teams { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.team { display:flex; align-items:center; gap:8px; flex:1; }
+.team.away { flex-direction:row-reverse; text-align:right; }
+.badge { width:36px; height:36px; border-radius:50%; background:var(--dark4); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; border:1px solid #333; flex-shrink:0; color:var(--green-light); }
+.team-name { font-size:13px; font-weight:700; }
+.vs { text-align:center; padding:0 12px; }
+.vs-text { font-size:10px; color:var(--muted); font-weight:700; }
+.vs-time { font-size:11px; color:var(--green-light); font-weight:700; margin-top:2px; }
+.odds-row { display:flex; gap:5px; margin-bottom:10px; }
+.odd-btn { flex:1; background:var(--dark4); border:1px solid #333; border-radius:7px; padding:7px 4px; text-align:center; cursor:pointer; transition:all .2s; }
+.odd-btn:hover,.odd-btn.sel { border-color:var(--green); background:rgba(0,166,81,.1); }
+.odd-label { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; }
+.odd-val { font-size:14px; font-weight:800; margin-top:1px; }
+.odd-btn:hover .odd-val,.odd-btn.sel .odd-val { color:var(--green); }
+.pred-row { display:flex; align-items:center; justify-content:space-between; padding-top:8px; border-top:1px solid #272727; }
+.pred-label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; font-weight:700; }
+.pick-chip { background:rgba(0,166,81,.12); color:var(--green-light); font-size:11px; font-weight:700; padding:3px 10px; border-radius:5px; border:1px solid rgba(0,166,81,.25); margin-top:3px; display:inline-block; }
+.conf-wrap { display:flex; align-items:center; gap:6px; }
+.conf-bar { width:70px; height:3px; background:#333; border-radius:2px; overflow:hidden; }
+.conf-fill { height:100%; background:var(--green); border-radius:2px; }
+.conf-pct { font-size:11px; color:var(--muted); }
+.del-btn { background:rgba(230,57,70,.15); border:1px solid rgba(230,57,70,.3); color:var(--red); font-size:10px; padding:3px 8px; border-radius:5px; cursor:pointer; margin-left:8px; }
+
+/* VIP CARD */
+.vip-card { background:linear-gradient(135deg,#120d00,var(--black)); border:1px solid rgba(245,166,35,.25); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
+.vip-card-head { background:linear-gradient(90deg,rgba(245,166,35,.12),transparent); padding:7px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(245,166,35,.12); }
+.vip-league { font-size:11px; color:var(--gold); font-weight:700; }
+.vip-odds-badge { background:rgba(245,166,35,.12); color:var(--gold); font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; border:1px solid rgba(245,166,35,.25); }
+.vip-analysis { background:rgba(245,166,35,.04); border:1px solid rgba(245,166,35,.12); border-radius:6px; padding:8px 10px; margin-bottom:10px; font-size:12px; color:var(--muted); line-height:1.5; }
+.vip-analysis strong { color:var(--gold); }
+.vip-pred-row { display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px solid rgba(245,166,35,.12); }
+.vip-conf-fill { background:var(--gold) !important; }
+
+/* LOCK SCREEN */
+.lock-wrap { background:var(--dark2); border:2px solid rgba(245,166,35,.25); border-radius:var(--radius); overflow:hidden; position:relative; min-height:300px; }
+.lock-blur { filter:blur(5px); pointer-events:none; padding:14px; }
+.lock-overlay { position:absolute; inset:0; background:rgba(10,10,10,.88); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; backdrop-filter:blur(2px); border-radius:var(--radius); }
+.lock-icon { font-size:44px; margin-bottom:10px; }
+.lock-title { font-size:20px; font-weight:900; color:var(--gold); margin-bottom:6px; }
+.lock-desc { font-size:13px; color:var(--muted); margin-bottom:14px; line-height:1.5; max-width:340px; }
+.vip-price { font-size:30px; font-weight:900; color:var(--gold); }
+.vip-price small { font-size:13px; font-weight:400; color:var(--muted); }
+.unlock-btn { background:linear-gradient(135deg,#f5a623,#e08c00); color:#000; border:none; padding:12px 28px; border-radius:8px; font-size:14px; font-weight:800; cursor:pointer; margin-top:14px; width:100%; transition:opacity .2s; }
+.unlock-btn:hover { opacity:.9; }
+
+/* ACCA */
+.acca-box { background:linear-gradient(135deg,#081d0e,var(--black)); border:1px solid rgba(0,166,81,.2); border-radius:var(--radius); padding:14px; margin-bottom:14px; }
+.acca-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.acca-title { font-size:13px; font-weight:800; color:var(--green-light); }
+.acca-odds { background:var(--green); color:#000; font-weight:800; font-size:13px; padding:3px 10px; border-radius:6px; }
+.acca-pick { display:flex; justify-content:space-between; background:rgba(0,0,0,.25); border-radius:6px; padding:7px 10px; font-size:12px; margin-bottom:5px; }
+.acca-sel { color:var(--green-light); font-weight:700; }
+
+/* RESULTS TABLE */
+.results-tbl { background:var(--dark2); border:1px solid #272727; border-radius:var(--radius); overflow:hidden; }
+.results-tbl table { width:100%; border-collapse:collapse; font-size:12px; }
+.results-tbl th { background:var(--dark3); padding:9px 12px; color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.5px; text-align:left; }
+.results-tbl td { padding:9px 12px; border-bottom:1px solid #1e1e1e; }
+.results-tbl tr:last-child td { border:none; }
+.won { background:rgba(0,201,98,.12); color:#00c962; padding:2px 8px; border-radius:5px; font-size:10px; font-weight:700; }
+.lost { background:rgba(230,57,70,.12); color:var(--red); padding:2px 8px; border-radius:5px; font-size:10px; font-weight:700; }
+.pending-chip { background:rgba(245,166,35,.12); color:var(--gold); padding:2px 8px; border-radius:5px; font-size:10px; font-weight:700; }
+
+/* WIDGET */
+.widget { background:var(--dark2); border:1px solid #272727; border-radius:var(--radius); padding:12px; margin-bottom:12px; }
+.wid-title { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+.form-dot-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #1e1e1e; font-size:12px; }
+.form-dot-row:last-child { border:none; }
+.fdots { display:flex; gap:3px; }
+.fd { width:18px; height:18px; border-radius:50%; font-size:8px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.fd.w { background:rgba(0,201,98,.18); color:#00c962; border:1px solid rgba(0,201,98,.3); }
+.fd.d { background:rgba(245,166,35,.18); color:var(--gold); border:1px solid rgba(245,166,35,.3); }
+.fd.l { background:rgba(230,57,70,.18); color:var(--red); border:1px solid rgba(230,57,70,.3); }
+.hot-tip { background:rgba(0,166,81,.07); border:1px solid rgba(0,166,81,.18); border-radius:6px; padding:7px 9px; margin-bottom:6px; }
+.hot-match { font-size:11px; color:var(--muted); }
+.hot-pick { font-size:12px; font-weight:700; color:var(--green-light); margin-top:2px; }
+
+/* ADMIN */
+.admin-card { background:var(--dark2); border:1px solid #2a2a2a; border-radius:var(--radius); padding:18px; margin-bottom:14px; }
+.admin-card h3 { font-size:14px; font-weight:800; margin-bottom:14px; }
+.admin-card h3.gold { color:var(--gold); }
+.admin-card h3.green { color:var(--green); }
+.fg { margin-bottom:12px; }
+.fg label { display:block; font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+.fg input,.fg select,.fg textarea { width:100%; background:var(--dark4); border:1px solid #333; border-radius:6px; color:var(--text); padding:8px 11px; font-size:13px; outline:none; font-family:inherit; }
+.fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--green); }
+.fg textarea { resize:vertical; }
+.fgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.btn { padding:10px 20px; border:none; border-radius:7px; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; }
+.btn.green { background:var(--green); color:#000; }
+.btn.green:hover { background:var(--green-dark); }
+.btn.gold { background:linear-gradient(135deg,#f5a623,#e08c00); color:#000; }
+.btn.red { background:rgba(230,57,70,.15); border:1px solid rgba(230,57,70,.3); color:var(--red); }
+.msg { margin-top:8px; font-size:12px; padding:8px 12px; border-radius:6px; display:none; }
+.msg.ok { background:rgba(0,166,81,.12); color:var(--green-light); border:1px solid rgba(0,166,81,.2); }
+.msg.err { background:rgba(230,57,70,.12); color:var(--red); border:1px solid rgba(230,57,70,.2); }
+
+/* USERS TABLE */
+.users-tbl { background:var(--dark2); border:1px solid #272727; border-radius:var(--radius); overflow:hidden; overflow-x:auto; }
+.users-tbl table { width:100%; border-collapse:collapse; font-size:12px; min-width:600px; }
+.users-tbl th { background:var(--dark3); padding:9px 12px; color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.5px; text-align:left; white-space:nowrap; }
+.users-tbl td { padding:8px 12px; border-bottom:1px solid #1e1e1e; }
+.users-tbl tr:last-child td { border:none; }
+
+/* MODAL */
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:500; align-items:center; justify-content:center; padding:16px; }
+.modal-bg.show { display:flex; }
+.modal { background:var(--dark2); border:1px solid rgba(245,166,35,.3); border-radius:14px; padding:24px; width:100%; max-width:420px; position:relative; max-height:90vh; overflow-y:auto; }
+.modal-close { position:absolute; top:14px; right:14px; background:var(--dark4); border:none; color:var(--muted); width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:14px; }
+.modal h2 { font-size:18px; font-weight:900; color:var(--gold); margin-bottom:4px; }
+.modal .sub { font-size:12px; color:var(--muted); margin-bottom:16px; }
+.price-box { background:rgba(245,166,35,.07); border:1px solid rgba(245,166,35,.2); border-radius:8px; padding:14px; text-align:center; margin-bottom:16px; }
+.price-box .price { font-size:30px; font-weight:900; color:var(--gold); }
+.price-box .cycle { font-size:12px; color:var(--muted); }
+.benefits { list-style:none; margin-bottom:16px; }
+.benefits li { display:flex; align-items:center; gap:8px; font-size:13px; padding:5px 0; border-bottom:1px solid #1e1e1e; }
+.benefits li:last-child { border:none; }
+.benefits .star { color:var(--gold); }
+.pay-info { background:var(--dark3); border-radius:7px; padding:10px 12px; font-size:12px; color:var(--muted); margin-bottom:14px; line-height:1.6; }
+.pay-info strong { color:var(--gold); }
+
+/* AUTH MODAL */
+.auth-tabs { display:flex; gap:0; margin-bottom:18px; border-bottom:2px solid #333; }
+.auth-tab { flex:1; padding:10px; background:none; border:none; color:var(--muted); font-size:13px; font-weight:700; cursor:pointer; text-align:center; border-bottom:2px solid transparent; margin-bottom:-2px; }
+.auth-tab.active { color:var(--green); border-bottom-color:var(--green); }
+
+/* PAGES */
+.page { display:none; }
+.page.active { display:block; }
+
+/* TOAST */
+.toast { position:fixed; bottom:20px; right:20px; background:var(--dark3); border:1px solid var(--green); color:var(--text); padding:10px 16px; border-radius:8px; font-size:13px; font-weight:600; z-index:999; animation:slideIn .3s ease; max-width:300px; }
+.toast.err { border-color:var(--red); }
+@keyframes slideIn { from{transform:translateX(100px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+/* LOADING */
+.loading { display:flex; align-items:center; justify-content:center; padding:40px; color:var(--muted); font-size:14px; gap:8px; }
+.spinner { width:18px; height:18px; border:2px solid #333; border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Empty state */
+.empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
+.empty .emoji { font-size:36px; margin-bottom:8px; }
+
+/* RESPONSIVE */
+@media(max-width:960px) { .sidebar,.rsidebar{display:none} }
+@media(max-width:600px) { .hero h1{font-size:24px} .fgrid{grid-template-columns:1fr} .nav-desktop{display:none} }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo" onclick="showPage('free');return false">
+    <div class="logo-icon">⚽</div>
+    Cyber<em>Predict</em>
+  </a>
+  <div class="nav-right">
+    <div id="nav-guest">
+      <button class="nav-btn" onclick="openAuth('login')">Login</button>
+      <button class="nav-btn vip" onclick="openSub()">🔑 VIP</button>
+    </div>
+    <div id="nav-user" style="display:none">
+      <span id="nav-name" style="font-size:12px;color:var(--muted);margin-right:6px"></span>
+      <button class="nav-btn active-user" id="nav-vip-status" onclick="openSub()" style="display:none">⭐ VIP Active</button>
+      <button class="nav-btn vip" id="nav-subscribe-btn" onclick="openSub()">🔑 VIP</button>
+      <button class="nav-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="live-badge"><div class="live-dot"></div> Live Predictions Today</div>
+  <h1>Win More With <em>Expert</em><br>Football Predictions</h1>
+  <p>Daily football tips, match analysis & verified odds for all major leagues across Africa and Europe.</p>
+  <div class="hero-stats">
+    <div class="h-stat"><div class="num">78%</div><div class="lbl">Win Rate</div></div>
+    <div class="h-stat"><div class="num">1,240+</div><div class="lbl">Members</div></div>
+    <div class="h-stat"><div class="num" id="hero-picks-count">—</div><div class="lbl">Picks Today</div></div>
+    <div class="h-stat"><div class="num">5.00+</div><div class="lbl">VIP Odds</div></div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="t-item"><span>🏆</span> Premier League</div>
+  <div class="t-item"><span>⭐</span> La Liga</div>
+  <div class="t-item"><span>🇩🇪</span> Bundesliga</div>
+  <div class="t-item"><span>🇮🇹</span> Serie A</div>
+  <div class="t-item"><span>🇫🇷</span> Ligue 1</div>
+  <div class="t-item"><span>🌍</span> AFCON</div>
+  <div class="t-item"><span>🏟️</span> Champions League</div>
+  <div class="t-item"><span>🇳🇬</span> NPFL</div>
+  <div class="t-item"><span>🌐</span> World Cup Qualifiers</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showPage('free');setTab(this)">⚽ Free Tips</button>
+  <button class="tab" onclick="showPage('acca');setTab(this)">📋 Accumulator</button>
+  <button class="tab vip-tab" onclick="showPage('vip');setTab(this)">🔑 VIP Tips</button>
+  <button class="tab" onclick="showPage('results');setTab(this)">📊 Results</button>
+  <button class="tab" id="admin-tab" style="display:none" onclick="showPage('admin');setTab(this)">⚙️ Admin</button>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="sidebar">
+    <div>
+      <div class="sb-title">Leagues</div>
+      <div class="sb-item active">🏆 Premier League</div>
+      <div class="sb-item">⭐ La Liga</div>
+      <div class="sb-item">🇩🇪 Bundesliga</div>
+      <div class="sb-item">🇮🇹 Serie A</div>
+      <div class="sb-item">🇫🇷 Ligue 1</div>
+      <div class="sb-item">🌍 AFCON</div>
+      <div class="sb-item">🏟️ UCL</div>
+      <div class="sb-item">🇳🇬 NPFL</div>
+    </div>
+    <div style="margin-top:8px">
+      <div class="sb-title">Tip Type</div>
+      <div class="sb-item active">1X2 Result</div>
+      <div class="sb-item">Both Teams Score</div>
+      <div class="sb-item">Over/Under 2.5</div>
+      <div class="sb-item">Double Chance</div>
+      <div class="sb-item">Correct Score</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- FREE TIPS -->
+    <div class="page active" id="page-free">
+      <div class="sec-head">
+        <div class="sec-title">Today's Free Tips</div>
+        <span class="pill green" id="free-count">0 Picks</span>
+      </div>
+      <div id="free-picks-list"><div class="loading"><div class="spinner"></div> Loading picks...</div></div>
+    </div>
+
+    <!-- ACCUMULATOR -->
+    <div class="page" id="page-acca">
+      <div class="sec-head">
+        <div class="sec-title">Today's Accumulators</div>
+        <span class="pill green">Expert Picks</span>
+      </div>
+      <div id="acca-list"><div class="loading"><div class="spinner"></div> Loading...</div></div>
+    </div>
+
+    <!-- VIP -->
+    <div class="page" id="page-vip">
+      <div class="sec-head">
+        <div class="sec-title" style="color:var(--gold)">🔑 VIP Premium Tips</div>
+        <span class="pill gold">Members Only</span>
+      </div>
+      <div id="vip-section">
+        <div class="loading"><div class="spinner"></div> Checking access...</div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="page" id="page-results">
+      <div class="sec-head">
+        <div class="sec-title">Recent Results</div>
+        <span class="pill green">Last 20</span>
+      </div>
+      <div class="results-tbl">
+        <table>
+          <thead><tr><th>Date</th><th>Match</th><th>Prediction</th><th>Result</th><th>Outcome</th></tr></thead>
+          <tbody id="results-body"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="page" id="page-admin">
+      <div class="sec-head" style="margin-bottom:16px">
+        <div class="sec-title">⚙️ Admin Panel</div>
+        <span class="pill" style="background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.25)">Private</span>
+      </div>
+
+      <!-- VIP Requests -->
+      <div class="admin-card" style="margin-bottom:14px">
+        <h3 class="gold">🔔 VIP Subscription Requests</h3>
+        <div id="vip-requests-list"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
+      <!-- All Users -->
+      <div class="admin-card" style="margin-bottom:14px">
+        <h3 class="green">👥 All Users</h3>
+        <div id="users-list"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
+      <!-- Add Free Pick -->
+      <div class="admin-card">
+        <h3 class="green">➕ Add Free Pick</h3>
+        <div class="fgrid">
+          <div class="fg"><label>Home Team</label><input id="a-home" placeholder="e.g. Man City"></div>
+          <div class="fg"><label>Away Team</label><input id="a-away" placeholder="e.g. Arsenal"></div>
+        </div>
+        <div class="fgrid">
+          <div class="fg"><label>League</label>
+            <select id="a-league">
+              <option>Premier League 🏆</option><option>La Liga ⭐</option>
+              <option>Bundesliga 🇩🇪</option><option>Serie A 🇮🇹</option>
+              <option>Ligue 1 🇫🇷</option><option>Champions League 🏟️</option>
+              <option>AFCON 🌍</option><option>NPFL 🇳🇬</option>
+            </select>
+          </div>
+          <div class="fg"><label>Match Date</label><input type="date" id="a-date"></div>
+        </div>
+        <div class="fgrid">
+          <div class="fg"><label>Match Time</label><input type="time" id="a-time" value="20:00"></div>
+          <div class="fg"><label>Confidence %</label><input type="number" id="a-conf" placeholder="75" min="1" max="100"></div>
+        </div>
+        <div class="fg"><label>Our Pick</label><input id="a-pick" placeholder="e.g. Home Win / Over 2.5 / BTTS"></div>
+        <div class="fgrid">
+          <div class="fg"><label>Home Odds</label><input type="number" id="a-odd1" placeholder="1.75" step="0.01"></div>
+          <div class="fg"><label>Draw Odds</label><input type="number" id="a-odd2" placeholder="3.50" step="0.01"></div>
+        </div>
+        <div class="fgrid">
+          <div class="fg"><label>Away Odds</label><input type="number" id="a-odd3" placeholder="4.20" step="0.01"></div>
+          <div class="fg"><label>Extra Market Odds</label><input type="number" id="a-odd4" placeholder="e.g. Over 2.5 odds" step="0.01"></div>
+        </div>
+        <button class="btn green" onclick="addFreePick()">+ Add Free Pick</button>
+        <div class="msg ok" id="free-msg"></div>
+      </div>
+
+      <!-- Add VIP Pick -->
+      <div class="admin-card" style="border-color:rgba(245,166,35,.2)">
+        <h3 class="gold">🔑 Add VIP Pick (5-Odds Game)</h3>
+        <div class="fgrid">
+          <div class="fg"><label>Home Team</label><input id="v-home" placeholder="e.g. PSG"></div>
+          <div class="fg"><label>Away Team</label><input id="v-away" placeholder="e.g. Bayern"></div>
+        </div>
+        <div class="fgrid">
+          <div class="fg"><label>League</label>
+            <select id="v-league">
+              <option>Champions League 🏟️</option><option>Premier League 🏆</option>
+              <option>La Liga ⭐</option><option>Bundesliga 🇩🇪</option><option>Serie A 🇮🇹</option>
+            </select>
+          </div>
+          <div class="fg"><label>Match Date</label><input type="date" id="v-date"></div>
+        </div>
+        <div class="fgrid">
+          <div class="fg"><label>Match Time</label><input type="time" id="v-time" value="21:00"></div>
+          <div class="fg"><label>Combined Odds</label><input type="number" id="v-odds" placeholder="5.40" step="0.01"></div>
+        </div>
+        <div class="fg"><label>VIP Pick</label><input id="v-pick" placeholder="e.g. PSG Win & Over 2.5 Goals"></div>
+        <div class="fg"><label>Expert Analysis</label><textarea id="v-analysis" rows="3" placeholder="Full analysis text — this will show to VIP members..."></textarea></div>
+        <div class="fg"><label>Confidence %</label><input type="number" id="v-conf" placeholder="88" min="1" max="100"></div>
+        <button class="btn gold" onclick="addVIPPick()">🔑 Add VIP Pick</button>
+        <div class="msg ok" id="vip-msg"></div>
+      </div>
+
+      <!-- Add Accumulator -->
+      <div class="admin-card">
+        <h3 class="green">📋 Add Accumulator</h3>
+        <div class="fgrid">
+          <div class="fg"><label>Title</label><input id="acc-title" placeholder="e.g. 5-Fold Weekend Special"></div>
+          <div class="fg"><label>Total Odds</label><input type="number" id="acc-odds" placeholder="12.40" step="0.01"></div>
+        </div>
+        <div class="fg"><label>Match Date</label><input type="date" id="acc-date"></div>
+        <div class="fg"><label>Picks (one per line: "Match | Pick | Odds")</label>
+          <textarea id="acc-picks" rows="5" placeholder="Man City vs Arsenal | Home Win | 1.75&#10;Real Madrid vs Barcelona | Over 2.5 | 1.65&#10;Bayern vs Dortmund | BTTS | 1.55"></textarea>
+        </div>
+        <button class="btn green" onclick="addAccumulator()">+ Add Accumulator</button>
+        <div class="msg ok" id="acc-msg"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="rsidebar">
+    <div class="widget">
+      <div class="wid-title">📊 Team Form</div>
+      <div class="form-dot-row"><span style="color:var(--muted);font-size:12px">Man City</span><div class="fdots"><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div><div class="fd d">D</div><div class="fd w">W</div></div></div>
+      <div class="form-dot-row"><span style="color:var(--muted);font-size:12px">Arsenal</span><div class="fdots"><div class="fd w">W</div><div class="fd w">W</div><div class="fd d">D</div><div class="fd w">W</div><div class="fd l">L</div></div></div>
+      <div class="form-dot-row"><span style="color:var(--muted);font-size:12px">Real Madrid</span><div class="fdots"><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div><div class="fd d">D</div></div></div>
+      <div class="form-dot-row"><span style="color:var(--muted);font-size:12px">Bayern</span><div class="fdots"><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div></div></div>
+      <div class="form-dot-row"><span style="color:var(--muted);font-size:12px">Barcelona</span><div class="fdots"><div class="fd w">W</div><div class="fd d">D</div><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div></div></div>
+    </div>
+    <div class="widget">
+      <div class="wid-title">🔥 Today's Hot Tips</div>
+      <div id="hot-tips-widget"><div style="color:var(--muted);font-size:12px;text-align:center;padding:10px">Loading...</div></div>
+    </div>
+    <div class="widget" style="background:linear-gradient(135deg,rgba(245,166,35,.06),var(--dark2));border-color:rgba(245,166,35,.2)">
+      <div class="wid-title" style="color:var(--gold)">🔑 VIP Access</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5">Premium 5-odds games, expert analysis & guaranteed selections.</p>
+      <div style="font-size:22px;font-weight:900;color:var(--gold);margin-bottom:8px">₦10,000<span style="font-size:12px;font-weight:400;color:var(--muted)">/mo</span></div>
+      <button onclick="openSub()" style="width:100%;background:linear-gradient(135deg,#f5a623,#e08c00);color:#000;border:none;padding:9px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">Subscribe Now</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUBSCRIPTION MODAL -->
+<div class="modal-bg" id="subModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSub()">✕</button>
+    <h2>🔑 VIP Subscription</h2>
+    <p class="sub">Join hundreds of winners with our premium picks</p>
+    <div class="price-box">
+      <div class="price">₦10,000</div>
+      <div class="cycle">per month · cancel anytime</div>
+    </div>
+    <ul class="benefits">
+      <li><span class="star">★</span> Daily 5-odds VIP games</li>
+      <li><span class="star">★</span> Manually curated expert picks</li>
+      <li><span class="star">★</span> In-depth match analysis</li>
+      <li><span class="star">★</span> Early access before odds drop</li>
+      <li><span class="star">★</span> WhatsApp VIP group access</li>
+      <li><span class="star">★</span> 24/7 support</li>
+    </ul>
+    <div class="pay-info">
+      💳 Send <strong>₦10,000</strong> to:<br>
+      Bank: <strong>OPAY</strong><br>
+      Account No: <strong>8085137325</strong><br>
+      Name: <strong>Cyprian Nyuykonge Valentine</strong><br><br>
+      Then fill the form below. VIP activated within <strong>30 minutes</strong>.
+    </div>
+    <div class="fg"><label>Full Name</label><input id="sub-name" placeholder="Your full name"></div>
+    <div class="fg"><label>Email Address</label><input type="email" id="sub-email" placeholder="your@email.com"></div>
+    <div class="fg"><label>Phone Number</label><input type="tel" id="sub-phone" placeholder="e.g. 08012345678"></div>
+    <button class="unlock-btn" onclick="submitVIPRequest()">✅ Submit Subscription Request</button>
+    <div class="msg ok" id="sub-msg" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="login-tab" onclick="switchAuth('login')">Login</button>
+      <button class="auth-tab" id="reg-tab" onclick="switchAuth('register')">Register</button>
+    </div>
+    <!-- LOGIN -->
+    <div id="login-form">
+      <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com"></div>
+      <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="Password"></div>
+      <button class="btn green" style="width:100%" onclick="doLogin()">Login</button>
+      <div class="msg err" id="login-err"></div>
+    </div>
+    <!-- REGISTER -->
+    <div id="reg-form" style="display:none">
+      <div class="fg"><label>Full Name</label><input id="r-name" placeholder="Your full name"></div>
+      <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="your@email.com"></div>
+      <div class="fg"><label>Phone</label><input type="tel" id="r-phone" placeholder="e.g. 08012345678"></div>
+      <div class="fg"><label>Password</label><input type="password" id="r-pass" placeholder="Choose a password"></div>
+      <button class="btn green" style="width:100%" onclick="doRegister()">Create Account</button>
+      <div class="msg err" id="reg-err"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+// Change this to your Render/Railway URL after deployment
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5000'
+  : ''; // same origin in production (served by Flask)
+
+let currentUser = null;
+let token = localStorage.getItem('cp_token');
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  // Set today's date on admin inputs
+  const today = new Date().toISOString().split('T')[0];
+  ['a-date','v-date','acc-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = today;
+  });
+
+  if(token) await loadUser();
+  loadFreePicks();
+  loadResults();
+  showPage('free');
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+async function loadUser() {
+  try {
+    const res = await fetch(`${API}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+    if(!res.ok) { token = null; localStorage.removeItem('cp_token'); return; }
+    currentUser = await res.json();
+    updateNav();
+  } catch(e) {}
+}
+
+function updateNav() {
+  if(!currentUser) {
+    document.getElementById('nav-guest').style.display = '';
+    document.getElementById('nav-user').style.display = 'none';
+    document.getElementById('admin-tab').style.display = 'none';
+    return;
+  }
+  document.getElementById('nav-guest').style.display = 'none';
+  document.getElementById('nav-user').style.display = '';
+  document.getElementById('nav-name').textContent = currentUser.name.split(' ')[0];
+  if(currentUser.is_admin) {
+    document.getElementById('admin-tab').style.display = '';
+    loadAdminData();
+  }
+  if(currentUser.is_vip || currentUser.is_admin) {
+    document.getElementById('nav-vip-status').style.display = '';
+    document.getElementById('nav-subscribe-btn').style.display = 'none';
+  }
+}
+
+async function doLogin() {
+  const email = document.getElementById('l-email').value;
+  const password = document.getElementById('l-pass').value;
+  if(!email||!password) return showErr('login-err','Fill all fields');
+  try {
+    const res = await fetch(`${API}/api/auth/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email,password})
+    });
+    const data = await res.json();
+    if(!res.ok) return showErr('login-err', data.error||'Login failed');
+    token = data.token; localStorage.setItem('cp_token', token);
+    currentUser = data.user;
+    closeAuth(); updateNav();
+    toast('✅ Welcome back, ' + currentUser.name.split(' ')[0] + '!');
+    if(currentUser.is_vip || currentUser.is_admin) loadVIPPicks();
+  } catch(e) { showErr('login-err','Server error'); }
+}
+
+async function doRegister() {
+  const name = document.getElementById('r-name').value;
+  const email = document.getElementById('r-email').value;
+  const phone = document.getElementById('r-phone').value;
+  const password = document.getElementById('r-pass').value;
+  if(!name||!email||!phone||!password) return showErr('reg-err','Fill all fields');
+  try {
+    const res = await fetch(`${API}/api/auth/register`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name,email,phone,password})
+    });
+    const data = await res.json();
+    if(!res.ok) return showErr('reg-err', data.error||'Registration failed');
+    token = data.token; localStorage.setItem('cp_token', token);
+    currentUser = data.user;
+    closeAuth(); updateNav();
+    toast('🎉 Account created! Welcome, ' + name.split(' ')[0]);
+  } catch(e) { showErr('reg-err','Server error'); }
+}
+
+function logout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('cp_token');
+  updateNav();
+  document.getElementById('admin-tab').style.display = 'none';
+  showPage('free');
+  toast('👋 Logged out');
+}
+
+// ── PICKS ─────────────────────────────────────────────────────────────────────
+async function loadFreePicks() {
+  const list = document.getElementById('free-picks-list');
+  try {
+    const res = await fetch(`${API}/api/picks/free`);
+    const picks = await res.json();
+    document.getElementById('free-count').textContent = picks.length + ' Picks';
+    document.getElementById('hero-picks-count').textContent = picks.length;
+    if(!picks.length) { list.innerHTML = '<div class="empty"><div class="emoji">📭</div>No picks added yet. Check back soon!</div>'; return; }
+    list.innerHTML = picks.map(p => renderFreeCard(p)).join('');
+    // Hot tips widget
+    const hot = picks.slice(0,3);
+    document.getElementById('hot-tips-widget').innerHTML = hot.map(p =>
+      `<div class="hot-tip"><div class="hot-match">${p.home_team} vs ${p.away_team}</div><div class="hot-pick">${p.pick}</div></div>`
+    ).join('');
+  } catch(e) { list.innerHTML = '<div class="empty">⚠️ Could not load picks. Is the server running?</div>'; }
+}
+
+function renderFreeCard(p) {
+  const isAdmin = currentUser && currentUser.is_admin;
+  const delBtn = isAdmin ? `<button class="del-btn" onclick="deleteFreePick('${p.id}')">✕ Delete</button>` : '';
+  return `<div class="card" id="card-${p.id}">
+    <div class="card-head">
+      <div class="league-lbl">${p.league}</div>
+      <span class="time-lbl">${p.match_time}${delBtn}</span>
+    </div>
+    <div class="card-body">
+      <div class="teams">
+        <div class="team">
+          <div class="badge">${p.home_team.substring(0,3).toUpperCase()}</div>
+          <div><div class="team-name">${p.home_team}</div></div>
+        </div>
+        <div class="vs"><div class="vs-text">VS</div><div class="vs-time">${p.match_time}</div></div>
+        <div class="team away">
+          <div class="badge">${p.away_team.substring(0,3).toUpperCase()}</div>
+          <div><div class="team-name">${p.away_team}</div></div>
+        </div>
+      </div>
+      <div class="odds-row">
+        ${p.odds_home ? `<div class="odd-btn" onclick="selOdd(this)"><div class="odd-label">Home</div><div class="odd-val">${p.odds_home}</div></div>` : ''}
+        ${p.odds_draw ? `<div class="odd-btn" onclick="selOdd(this)"><div class="odd-label">Draw</div><div class="odd-val">${p.odds_draw}</div></div>` : ''}
+        ${p.odds_away ? `<div class="odd-btn" onclick="selOdd(this)"><div class="odd-label">Away</div><div class="odd-val">${p.odds_away}</div></div>` : ''}
+        ${p.odds_extra ? `<div class="odd-btn sel" onclick="selOdd(this)"><div class="odd-label">Pick Odds</div><div class="odd-val">${p.odds_extra}</div></div>` : ''}
+      </div>
+      <div class="pred-row">
+        <div>
+          <div class="pred-label">Our Prediction</div>
+          <div class="pick-chip">${p.pick}</div>
+        </div>
+        <div class="conf-wrap">
+          <div class="conf-bar"><div class="conf-fill" style="width:${p.confidence}%"></div></div>
+          <span class="conf-pct">${p.confidence}%</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function deleteFreePick(id) {
+  if(!confirm('Delete this pick?')) return;
+  try {
+    const res = await fetch(`${API}/api/picks/free/${id}`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} });
+    if(res.ok) { document.getElementById('card-'+id)?.remove(); toast('Pick deleted'); loadFreePicks(); }
+  } catch(e) {}
+}
+
+async function loadVIPPicks() {
+  const sec = document.getElementById('vip-section');
+  if(!currentUser) {
+    renderLockScreen();
+    return;
+  }
+  sec.innerHTML = '<div class="loading"><div class="spinner"></div> Loading VIP picks...</div>';
+  try {
+    const res = await fetch(`${API}/api/picks/vip`, { headers:{Authorization:`Bearer ${token}`} });
+    if(res.status === 403) { renderLockScreen(); return; }
+    const picks = await res.json();
+    if(!picks.length) {
+      sec.innerHTML = `<div style="background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--gold)">
+        ✅ VIP Active — No picks added yet for today. Check back soon!</div>`;
+      return;
+    }
+    const expiry = currentUser.vip_expires ? ` — Expires ${currentUser.vip_expires}` : '';
+    sec.innerHTML = `<div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18);border-radius:7px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:var(--gold)">
+      ✅ VIP Active${expiry}</div>` + picks.map(p => renderVIPCard(p)).join('');
+  } catch(e) { sec.innerHTML = '<div class="empty">⚠️ Error loading VIP picks</div>'; }
+}
+
+function renderVIPCard(p) {
+  const isAdmin = currentUser && currentUser.is_admin;
+  const delBtn = isAdmin ? `<button class="del-btn" onclick="deleteVIPPick('${p.id}')">✕</button>` : '';
+  return `<div class="vip-card">
+    <div class="vip-card-head">
+      <span class="vip-league">${p.league} ${delBtn}</span>
+      <span class="vip-odds-badge">⭐ ${p.combined_odds} Odds</span>
+    </div>
+    <div class="card-body">
+      <div class="teams">
+        <div class="team">
+          <div class="badge" style="border-color:rgba(245,166,35,.3);color:var(--gold)">${p.home_team.substring(0,3).toUpperCase()}</div>
+          <div><div class="team-name">${p.home_team}</div></div>
+        </div>
+        <div class="vs"><div class="vs-text">VS</div><div class="vs-time">${p.match_time}</div></div>
+        <div class="team away">
+          <div class="badge" style="border-color:rgba(245,166,35,.3);color:var(--gold)">${p.away_team.substring(0,3).toUpperCase()}</div>
+          <div><div class="team-name">${p.away_team}</div></div>
+        </div>
+      </div>
+      ${p.analysis ? `<div class="vip-analysis"><strong>🎯 Expert Pick:</strong> ${p.pick}<br><br>${p.analysis}</div>` : `<div class="vip-analysis"><strong>🎯 Pick:</strong> ${p.pick}</div>`}
+      <div class="vip-pred-row">
+        <div class="pred-label">Expert Confidence</div>
+        <div class="conf-wrap">
+          <div class="conf-bar"><div class="conf-fill vip-conf-fill" style="width:${p.confidence}%"></div></div>
+          <span class="conf-pct" style="color:var(--gold)">${p.confidence}%</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function deleteVIPPick(id) {
+  if(!confirm('Delete this VIP pick?')) return;
+  try {
+    const res = await fetch(`${API}/api/picks/vip/${id}`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} });
+    if(res.ok) { toast('VIP pick deleted'); loadVIPPicks(); }
+  } catch(e) {}
+}
+
+function renderLockScreen() {
+  document.getElementById('vip-section').innerHTML = `
+    <div class="lock-wrap">
+      <div class="lock-blur">
+        <div class="vip-card"><div class="vip-card-head"><span class="vip-league">Champions League 🏟️</span><span class="vip-odds-badge">⭐ 5.40 Odds</span></div>
+          <div class="card-body"><div class="teams"><div class="team"><div class="badge">PSG</div><div><div class="team-name">PSG</div></div></div><div class="vs"><div class="vs-text">VS</div></div><div class="team away"><div class="badge">BAY</div><div><div class="team-name">Bayern</div></div></div></div></div></div>
+      </div>
+      <div class="lock-overlay">
+        <div class="lock-icon">🔐</div>
+        <div class="lock-title">VIP Members Only</div>
+        <div class="lock-desc">Get access to our premium 5-odds games, expert picks, and guaranteed winning selections — manually curated daily.</div>
+        <div class="vip-price">₦10,000 <small>/ month</small></div>
+        <button class="unlock-btn" onclick="openSub()">🔑 Subscribe to Unlock VIP</button>
+        ${!currentUser ? `<p style="margin-top:10px;font-size:12px;color:var(--muted)">Already subscribed? <a href="#" onclick="openAuth('login');return false" style="color:var(--green-light)">Login here</a></p>` : ''}
+      </div>
+    </div>`;
+}
+
+// ── ACCUMULATOR ───────────────────────────────────────────────────────────────
+async function loadAccumulators() {
+  const list = document.getElementById('acca-list');
+  try {
+    const res = await fetch(`${API}/api/accumulators`);
+    const accas = await res.json();
+    if(!accas.length) { list.innerHTML = '<div class="empty"><div class="emoji">📋</div>No accumulators yet. Check back!</div>'; return; }
+    list.innerHTML = accas.map(a => `
+      <div class="acca-box">
+        <div class="acca-head">
+          <div class="acca-title">⚡ ${a.title}</div>
+          <div class="acca-odds">Odds: ${a.total_odds}</div>
+        </div>
+        ${a.picks.map(p => `<div class="acca-pick"><span>${p.match}</span><span class="acca-sel">${p.pick} — ${p.odds}</span></div>`).join('')}
+        <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px">
+          Stake ₦1,000 → Potential Win <strong style="color:var(--green)">₦${(1000*a.total_odds).toLocaleString()}</strong>
+        </div>
+      </div>`).join('');
+  } catch(e) { list.innerHTML = '<div class="empty">⚠️ Error loading accumulators</div>'; }
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────────
+async function loadResults() {
+  try {
+    const res = await fetch(`${API}/api/results`);
+    const results = await res.json();
+    const tbody = document.getElementById('results-body');
+    if(!results.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">No results yet</td></tr>'; return; }
+    tbody.innerHTML = results.map(r => {
+      const chip = r.result === 'won' ? '<span class="won">✓ WON</span>' :
+                   r.result === 'lost' ? '<span class="lost">✗ LOST</span>' :
+                   '<span class="pending-chip">Pending</span>';
+      return `<tr><td style="color:var(--muted)">${r.match_date}</td><td>${r.home_team} vs ${r.away_team}</td><td style="color:var(--green-light)">${r.pick}</td><td>—</td><td>${chip}</td></tr>`;
+    }).join('');
+  } catch(e) {}
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+async function loadAdminData() {
+  loadVIPRequests();
+  loadUsers();
+}
+
+async function loadVIPRequests() {
+  try {
+    const res = await fetch(`${API}/api/vip/requests`, { headers:{Authorization:`Bearer ${token}`} });
+    const reqs = await res.json();
+    const el = document.getElementById('vip-requests-list');
+    if(!reqs.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px">No pending requests</div>'; return; }
+    el.innerHTML = `<div class="users-tbl"><table>
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>${reqs.map(r => `<tr>
+        <td>${r.name}</td><td>${r.email}</td><td>${r.phone}</td>
+        <td style="color:var(--muted)">${r.created_at.split('T')[0]||r.created_at.split(' ')[0]}</td>
+        <td><span class="${r.status==='approved'?'won':'pending-chip'}">${r.status}</span></td>
+        <td>${r.status!=='approved'?`<button class="btn green" style="padding:4px 10px;font-size:11px" onclick="approveVIP('${r.email}')">✅ Approve</button>`:''}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  } catch(e) {}
+}
+
+async function approveVIP(email) {
+  try {
+    const res = await fetch(`${API}/api/vip/approve`, {
+      method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},
+      body: JSON.stringify({email})
+    });
+    const data = await res.json();
+    if(res.ok) { toast('✅ VIP approved for ' + email); loadVIPRequests(); loadUsers(); }
+    else toast('❌ ' + data.error, true);
+  } catch(e) {}
+}
+
+async function loadUsers() {
+  try {
+    const res = await fetch(`${API}/api/admin/users`, { headers:{Authorization:`Bearer ${token}`} });
+    const users = await res.json();
+    document.getElementById('users-list').innerHTML = `<div class="users-tbl"><table>
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>VIP</th><th>Expires</th><th>Joined</th><th>Action</th></tr></thead>
+      <tbody>${users.map(u => `<tr>
+        <td>${u.name}${u.is_admin?'<span style="color:var(--gold);font-size:10px;margin-left:4px">ADMIN</span>':''}</td>
+        <td style="color:var(--muted)">${u.email}</td>
+        <td>${u.phone}</td>
+        <td>${u.is_vip?'<span class="won">✓ VIP</span>':'<span style="color:var(--muted);font-size:11px">No</span>'}</td>
+        <td style="color:var(--muted);font-size:11px">${u.vip_expires||'—'}</td>
+        <td style="color:var(--muted);font-size:11px">${(u.created_at||'').split('T')[0]}</td>
+        <td>${!u.is_admin?`${u.is_vip?`<button class="btn red" style="padding:4px 9px;font-size:10px" onclick="revokeVIP('${u.email}')">Revoke</button>`:`<button class="btn green" style="padding:4px 9px;font-size:10px" onclick="approveVIP('${u.email}')">Give VIP</button>`}`:'—'}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  } catch(e) {}
+}
+
+async function revokeVIP(email) {
+  if(!confirm(`Revoke VIP for ${email}?`)) return;
+  try {
+    await fetch(`${API}/api/vip/revoke`, {
+      method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},
+      body: JSON.stringify({email})
+    });
+    toast('VIP revoked'); loadUsers();
+  } catch(e) {}
+}
+
+async function addFreePick() {
+  const payload = {
+    home_team: document.getElementById('a-home').value.trim(),
+    away_team: document.getElementById('a-away').value.trim(),
+    league: document.getElementById('a-league').value,
+    match_date: document.getElementById('a-date').value,
+    match_time: document.getElementById('a-time').value,
+    pick: document.getElementById('a-pick').value.trim(),
+    confidence: parseInt(document.getElementById('a-conf').value)||70,
+    odds_home: parseFloat(document.getElementById('a-odd1').value)||null,
+    odds_draw: parseFloat(document.getElementById('a-odd2').value)||null,
+    odds_away: parseFloat(document.getElementById('a-odd3').value)||null,
+    odds_extra: parseFloat(document.getElementById('a-odd4').value)||null,
+  };
+  if(!payload.home_team||!payload.away_team||!payload.pick||!payload.match_date) return showMsg('free-msg','err','Fill required fields');
+  try {
+    const res = await fetch(`${API}/api/picks/free`, {
+      method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},
+      body: JSON.stringify(payload)
+    });
+    if(res.ok) { showMsg('free-msg','ok','✅ Free pick added!'); loadFreePicks(); }
+    else { const d=await res.json(); showMsg('free-msg','err',d.error||'Error'); }
+  } catch(e) { showMsg('free-msg','err','Server error'); }
+}
+
+async function addVIPPick() {
+  const payload = {
+    home_team: document.getElementById('v-home').value.trim(),
+    away_team: document.getElementById('v-away').value.trim(),
+    league: document.getElementById('v-league').value,
+    match_date: document.getElementById('v-date').value,
+    match_time: document.getElementById('v-time').value,
+    pick: document.getElementById('v-pick').value.trim(),
+    analysis: document.getElementById('v-analysis').value.trim(),
+    combined_odds: parseFloat(document.getElementById('v-odds').value)||5.0,
+    confidence: parseInt(document.getElementById('v-conf').value)||85,
+  };
+  if(!payload.home_team||!payload.away_team||!payload.pick||!payload.match_date) return showMsg('vip-msg','err','Fill required fields');
+  try {
+    const res = await fetch(`${API}/api/picks/vip`, {
+      method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},
+      body: JSON.stringify(payload)
+    });
+    if(res.ok) { showMsg('vip-msg','ok','✅ VIP pick added!'); }
+    else { const d=await res.json(); showMsg('vip-msg','err',d.error||'Error'); }
+  } catch(e) { showMsg('vip-msg','err','Server error'); }
+}
+
+async function addAccumulator() {
+  const linesRaw = document.getElementById('acc-picks').value.trim();
+  if(!linesRaw) return showMsg('acc-msg','err','Enter picks');
+  const picks = linesRaw.split('\n').map(l => {
+    const parts = l.split('|').map(x=>x.trim());
+    return { match: parts[0]||'', pick: parts[1]||'', odds: parts[2]||'' };
+  }).filter(p=>p.match);
+  const payload = {
+    title: document.getElementById('acc-title').value.trim(),
+    total_odds: parseFloat(document.getElementById('acc-odds').value)||0,
+    match_date: document.getElementById('acc-date').value,
+    picks
+  };
+  if(!payload.title||!payload.match_date) return showMsg('acc-msg','err','Fill required fields');
+  try {
+    const res = await fetch(`${API}/api/accumulators`, {
+      method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},
+      body: JSON.stringify(payload)
+    });
+    if(res.ok) { showMsg('acc-msg','ok','✅ Accumulator added!'); loadAccumulators(); }
+    else { const d=await res.json(); showMsg('acc-msg','err',d.error||'Error'); }
+  } catch(e) { showMsg('acc-msg','err','Server error'); }
+}
+
+// ── VIP REQUEST ───────────────────────────────────────────────────────────────
+async function submitVIPRequest() {
+  const name = document.getElementById('sub-name').value.trim();
+  const email = document.getElementById('sub-email').value.trim();
+  const phone = document.getElementById('sub-phone').value.trim();
+  if(!name||!email||!phone) return showMsg('sub-msg','err','Fill all fields');
+  try {
+    const res = await fetch(`${API}/api/vip/request`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name,email,phone})
+    });
+    const data = await res.json();
+    if(res.ok) {
+      showMsg('sub-msg','ok','✅ Request submitted! VIP will be activated within 30 minutes.');
+      document.getElementById('sub-name').value='';
+      document.getElementById('sub-email').value='';
+      document.getElementById('sub-phone').value='';
+    } else { showMsg('sub-msg','err',data.error||'Error submitting'); }
+  } catch(e) { showMsg('sub-msg','err','Server error'); }
+}
+
+// ── UI HELPERS ────────────────────────────────────────────────────────────────
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(page==='vip') loadVIPPicks();
+  if(page==='acca') loadAccumulators();
+  if(page==='results') loadResults();
+  if(page==='admin') loadAdminData();
+}
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+function selOdd(btn) {
+  btn.closest('.odds-row').querySelectorAll('.odd-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+function openSub() { document.getElementById('subModal').classList.add('show'); }
+function closeSub() { document.getElementById('subModal').classList.remove('show'); }
+function openAuth(tab='login') { document.getElementById('authModal').classList.add('show'); switchAuth(tab); }
+function closeAuth() { document.getElementById('authModal').classList.remove('show'); }
+function switchAuth(tab) {
+  document.getElementById('login-form').style.display = tab==='login'?'':'none';
+  document.getElementById('reg-form').style.display = tab==='register'?'':'none';
+  document.getElementById('login-tab').classList.toggle('active', tab==='login');
+  document.getElementById('reg-tab').classList.toggle('active', tab==='register');
+}
+function showErr(id,msg) { const el=document.getElementById(id); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',4000); }
+function showMsg(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = 'msg ' + type; el.textContent = msg; el.style.display = 'block';
+  setTimeout(()=>el.style.display='none', 4000);
+}
+function toast(msg, isErr=false) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (isErr?' err':'');
+  el.textContent = msg; document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 3500);
+}
+// Close modals on background click
+document.getElementById('subModal').addEventListener('click', function(e){if(e.target===this)closeSub();});
+document.getElementById('authModal').addEventListener('click', function(e){if(e.target===this)closeAuth();});
+
+init();
+</script>
+</body>
+</html>
