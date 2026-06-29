@@ -6,89 +6,105 @@
 <title>CyberPredict — Football Predictions</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--green:#00a651;--gd:#007a3d;--gl:#00c962;--gold:#f5a623;--gld:#e08c00;--black:#0d0d0d;--dark:#151515;--d2:#1e1e1e;--d3:#252525;--d4:#2e2e2e;--text:#f0f0f0;--mut:#a0a0a0;--red:#e63946;--r:10px}
+:root{--green:#00a651;--gd:#007a3d;--gl:#00c962;--gold:#f5a623;--gld:#e08c00;--black:#0d0d0d;--dark:rgba(10,10,10,0.92);--d2:rgba(20,20,20,0.92);--d3:rgba(30,30,30,0.88);--d4:#2e2e2e;--text:#f0f0f0;--mut:#a0a0a0;--red:#e63946;--r:10px}
 html{scroll-behavior:smooth}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--black);color:var(--text);min-height:100vh}
-nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;height:56px;gap:10px}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--text);min-height:100vh;background:#0d0d0d}
+
+/* BG IMAGE */
+.bg-wrap{position:fixed;inset:0;z-index:0}
+.bg-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.bg-wrap::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.78)}
+.site-wrap{position:relative;z-index:1}
+
+nav{background:rgba(10,10,10,0.95);border-bottom:2px solid var(--green);padding:0 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;height:56px;gap:10px;backdrop-filter:blur(10px)}
 .logo{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900;text-decoration:none;color:#fff;white-space:nowrap}
 .logo-icon{width:34px;height:34px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
 .logo em{color:var(--green);font-style:normal}
 .nav-right{display:flex;align-items:center;gap:8px}
-.nav-btn{background:none;border:1px solid #333;color:var(--mut);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.nav-btn{background:none;border:1px solid #444;color:var(--mut);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
 .nav-btn:hover{border-color:var(--green);color:#fff}
 .nav-btn.vip{background:linear-gradient(135deg,#f5a623,#e08c00);color:#000;border:none}
-.nav-btn.au{background:rgba(0,166,81,.15);border-color:var(--green);color:var(--gl)}
-.hero{background:linear-gradient(180deg,#081a0e 0%,var(--black) 100%);padding:32px 16px 24px;text-align:center;border-bottom:1px solid #1a3020;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:500px;height:400px;background:radial-gradient(circle,rgba(0,166,81,.1) 0%,transparent 70%);pointer-events:none}
-.live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,166,81,.12);border:1px solid rgba(0,166,81,.25);color:var(--gl);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase}
+.nav-btn.au{background:rgba(0,166,81,.2);border-color:var(--green);color:var(--gl)}
+
+.hero{padding:40px 16px 28px;text-align:center;position:relative}
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,166,81,.18);border:1px solid rgba(0,166,81,.35);color:var(--gl);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:14px;letter-spacing:.5px;text-transform:uppercase}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--gl);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:32px;font-weight:900;line-height:1.1;margin-bottom:8px}
+.hero h1{font-size:36px;font-weight:900;line-height:1.1;margin-bottom:8px;text-shadow:0 2px 20px rgba(0,0,0,.8)}
 .hero h1 em{font-style:normal;color:var(--green)}
-.hero p{color:var(--mut);font-size:14px;max-width:480px;margin:0 auto 20px}
+.hero p{color:rgba(255,255,255,0.7);font-size:14px;max-width:480px;margin:0 auto 24px;text-shadow:0 1px 8px rgba(0,0,0,.8)}
 .hero-stats{display:flex;justify-content:center;gap:28px;flex-wrap:wrap}
+.h-stat{background:rgba(0,0,0,0.5);border:1px solid rgba(0,166,81,.25);border-radius:10px;padding:12px 20px;backdrop-filter:blur(8px)}
 .h-stat .num{font-size:24px;font-weight:900;color:var(--green)}
 .h-stat .lbl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
-.ticker{background:var(--d3);border-bottom:1px solid #222;padding:8px 16px;display:flex;gap:20px;overflow-x:auto;scrollbar-width:none}
+
+.ticker{background:rgba(10,10,10,0.88);border-bottom:1px solid #222;padding:8px 16px;display:flex;gap:20px;overflow-x:auto;scrollbar-width:none;backdrop-filter:blur(8px)}
 .ticker::-webkit-scrollbar{display:none}
 .t-item{display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px;font-weight:600;color:var(--mut)}
-.tabs{background:var(--dark);border-bottom:1px solid #222;display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px}
+
+.tabs{background:rgba(10,10,10,0.9);border-bottom:1px solid #222;display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px;backdrop-filter:blur(8px)}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:14px 16px;background:none;border:none;color:var(--mut);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}
 .tab.active{color:var(--green);border-bottom-color:var(--green)}
 .tab.vt.active{color:var(--gold);border-bottom-color:var(--gold)}
 .tab:hover:not(.active){color:var(--text)}
+
 .layout{display:flex;max-width:1280px;margin:0 auto}
-.sidebar{width:200px;flex-shrink:0;background:var(--dark);border-right:1px solid #1e1e1e;padding:12px 0}
+.sidebar{width:200px;flex-shrink:0;background:rgba(10,10,10,0.85);border-right:1px solid #1e1e1e;padding:12px 0;backdrop-filter:blur(8px)}
 .sb-title{font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:1px;padding:10px 14px 4px}
 .sb-item{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;font-size:12px;color:var(--mut);border-left:3px solid transparent;transition:all .15s}
-.sb-item:hover{background:var(--d3);color:var(--text)}
-.sb-item.active{background:rgba(0,166,81,.08);color:var(--green);border-left-color:var(--green)}
+.sb-item:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.sb-item.active{background:rgba(0,166,81,.1);color:var(--green);border-left-color:var(--green)}
+
 .content{flex:1;padding:14px;min-width:0}
-.rs{width:240px;flex-shrink:0;padding:12px;border-left:1px solid #1e1e1e;background:var(--dark)}
+.rs{width:240px;flex-shrink:0;padding:12px;border-left:1px solid #1e1e1e;background:rgba(10,10,10,0.85);backdrop-filter:blur(8px)}
+
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .st{font-size:14px;font-weight:700}
 .pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
 .pill.g{background:var(--green);color:#000}
 .pill.gold{background:rgba(245,166,35,.15);color:var(--gold);border:1px solid rgba(245,166,35,.3)}
-.card{background:var(--d2);border:1px solid #272727;border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
-.card:hover{border-color:#383838}
-.ch{background:var(--d3);padding:7px 14px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--mut)}
+
+.card{background:rgba(20,20,20,0.92);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .2s;backdrop-filter:blur(6px)}
+.card:hover{border-color:rgba(0,166,81,.3)}
+.ch{background:rgba(30,30,30,0.9);padding:7px 14px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--mut)}
 .ll{display:flex;align-items:center;gap:6px;font-weight:700}
 .tl{color:var(--gl);font-weight:700}
 .cb{padding:12px 14px}
 .teams{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .team{display:flex;align-items:center;gap:8px;flex:1}
 .team.away{flex-direction:row-reverse;text-align:right}
-.bdg{width:36px;height:36px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:1px solid #333;flex-shrink:0;color:var(--gl)}
+.bdg{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:1px solid rgba(0,166,81,.3);flex-shrink:0;color:var(--gl)}
 .tn{font-size:13px;font-weight:700}
 .vs{text-align:center;padding:0 12px}
 .vst{font-size:10px;color:var(--mut);font-weight:700}
 .vstm{font-size:11px;color:var(--gl);font-weight:700;margin-top:2px}
 .or{display:flex;gap:5px;margin-bottom:10px}
-.ob{flex:1;background:var(--d4);border:1px solid #333;border-radius:7px;padding:7px 4px;text-align:center;cursor:pointer;transition:all .2s}
-.ob:hover,.ob.sel{border-color:var(--green);background:rgba(0,166,81,.1)}
+.ob{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:7px 4px;text-align:center;cursor:pointer;transition:all .2s}
+.ob:hover,.ob.sel{border-color:var(--green);background:rgba(0,166,81,.12)}
 .ol{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
 .ov{font-size:14px;font-weight:800;margin-top:1px}
 .ob:hover .ov,.ob.sel .ov{color:var(--green)}
-.pr{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid #272727}
+.pr{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
 .pl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
-.pc{background:rgba(0,166,81,.12);color:var(--gl);font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;border:1px solid rgba(0,166,81,.25);margin-top:3px;display:inline-block}
+.pc{background:rgba(0,166,81,.15);color:var(--gl);font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;border:1px solid rgba(0,166,81,.3);margin-top:3px;display:inline-block}
 .cw{display:flex;align-items:center;gap:6px}
 .cb2{width:70px;height:3px;background:#333;border-radius:2px;overflow:hidden}
 .cf{height:100%;background:var(--green);border-radius:2px}
 .cp{font-size:11px;color:var(--mut)}
 .db{background:rgba(230,57,70,.15);border:1px solid rgba(230,57,70,.3);color:var(--red);font-size:10px;padding:3px 8px;border-radius:5px;cursor:pointer;margin-left:8px}
-.vc{background:linear-gradient(135deg,#120d00,var(--black));border:1px solid rgba(245,166,35,.25);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
-.vch{background:linear-gradient(90deg,rgba(245,166,35,.12),transparent);padding:7px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(245,166,35,.12)}
+
+.vc{background:rgba(18,13,0,0.92);border:1px solid rgba(245,166,35,.25);border-radius:var(--r);margin-bottom:10px;overflow:hidden;backdrop-filter:blur(6px)}
+.vch{background:linear-gradient(90deg,rgba(245,166,35,.15),transparent);padding:7px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(245,166,35,.12)}
 .vl{font-size:11px;color:var(--gold);font-weight:700}
 .vob{background:rgba(245,166,35,.12);color:var(--gold);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid rgba(245,166,35,.25)}
 .van{background:rgba(245,166,35,.04);border:1px solid rgba(245,166,35,.12);border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:12px;color:var(--mut);line-height:1.5}
 .van strong{color:var(--gold)}
 .vpr{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(245,166,35,.12)}
-.lw{background:var(--d2);border:2px solid rgba(245,166,35,.25);border-radius:var(--r);overflow:hidden;position:relative;min-height:280px}
+
+.lw{background:rgba(20,20,20,0.9);border:2px solid rgba(245,166,35,.25);border-radius:var(--r);overflow:hidden;position:relative;min-height:280px;backdrop-filter:blur(8px)}
 .lb{filter:blur(5px);pointer-events:none;padding:14px}
-.lo{position:absolute;inset:0;background:rgba(10,10,10,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;backdrop-filter:blur(2px);border-radius:var(--r)}
+.lo{position:absolute;inset:0;background:rgba(5,5,5,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;border-radius:var(--r)}
 .li{font-size:44px;margin-bottom:10px}
 .lt{font-size:20px;font-weight:900;color:var(--gold);margin-bottom:6px}
 .ld{font-size:13px;color:var(--mut);margin-bottom:14px;line-height:1.5;max-width:340px}
@@ -96,39 +112,43 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
 .vp2 small{font-size:13px;font-weight:400;color:var(--mut)}
 .ub{background:linear-gradient(135deg,#f5a623,#e08c00);color:#000;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-top:14px;width:100%;transition:opacity .2s}
 .ub:hover{opacity:.9}
-.ab{background:linear-gradient(135deg,#081d0e,var(--black));border:1px solid rgba(0,166,81,.2);border-radius:var(--r);padding:14px;margin-bottom:14px}
+
+.ab{background:rgba(8,29,14,0.92);border:1px solid rgba(0,166,81,.2);border-radius:var(--r);padding:14px;margin-bottom:14px;backdrop-filter:blur(6px)}
 .ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.at{font-size:13px;font-weight:800;color:var(--gl)}
+.at2{font-size:13px;font-weight:800;color:var(--gl)}
 .ao{background:var(--green);color:#000;font-weight:800;font-size:13px;padding:3px 10px;border-radius:6px}
-.ap{display:flex;justify-content:space-between;background:rgba(0,0,0,.25);border-radius:6px;padding:7px 10px;font-size:12px;margin-bottom:5px}
+.ap{display:flex;justify-content:space-between;background:rgba(0,0,0,.3);border-radius:6px;padding:7px 10px;font-size:12px;margin-bottom:5px}
 .as2{color:var(--gl);font-weight:700}
-.rt{background:var(--d2);border:1px solid #272727;border-radius:var(--r);overflow:hidden}
+
+.rt{background:rgba(20,20,20,0.92);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);overflow:hidden;backdrop-filter:blur(6px)}
 .rt table{width:100%;border-collapse:collapse;font-size:12px}
-.rt th{background:var(--d3);padding:9px 12px;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.5px;text-align:left}
-.rt td{padding:9px 12px;border-bottom:1px solid #1e1e1e}
+.rt th{background:rgba(30,30,30,0.9);padding:9px 12px;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.5px;text-align:left}
+.rt td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
 .rt tr:last-child td{border:none}
 .won{background:rgba(0,201,98,.12);color:#00c962;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700}
 .lost{background:rgba(230,57,70,.12);color:var(--red);padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700}
 .pend{background:rgba(245,166,35,.12);color:var(--gold);padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700}
-.wid{background:var(--d2);border:1px solid #272727;border-radius:var(--r);padding:12px;margin-bottom:12px}
+
+.wid{background:rgba(20,20,20,0.88);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:12px;margin-bottom:12px;backdrop-filter:blur(6px)}
 .wt{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.fdr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1e1e1e;font-size:12px}
+.fdr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px}
 .fdr:last-child{border:none}
 .fds{display:flex;gap:3px}
 .fd{width:18px;height:18px;border-radius:50%;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .fd.w{background:rgba(0,201,98,.18);color:#00c962;border:1px solid rgba(0,201,98,.3)}
 .fd.d{background:rgba(245,166,35,.18);color:var(--gold);border:1px solid rgba(245,166,35,.3)}
 .fd.l{background:rgba(230,57,70,.18);color:var(--red);border:1px solid rgba(230,57,70,.3)}
-.ht{background:rgba(0,166,81,.07);border:1px solid rgba(0,166,81,.18);border-radius:6px;padding:7px 9px;margin-bottom:6px}
+.ht{background:rgba(0,166,81,.08);border:1px solid rgba(0,166,81,.18);border-radius:6px;padding:7px 9px;margin-bottom:6px}
 .hm{font-size:11px;color:var(--mut)}
 .hp{font-size:12px;font-weight:700;color:var(--gl);margin-top:2px}
-.ac{background:var(--d2);border:1px solid #2a2a2a;border-radius:var(--r);padding:18px;margin-bottom:14px}
+
+.ac{background:rgba(20,20,20,0.92);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:18px;margin-bottom:14px;backdrop-filter:blur(6px)}
 .ac h3{font-size:14px;font-weight:800;margin-bottom:14px}
 .ac h3.gn{color:var(--green)}
 .ac h3.gd{color:var(--gold)}
 .fg{margin-bottom:12px}
 .fg label{display:block;font-size:11px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.fg input,.fg select,.fg textarea{width:100%;background:var(--d4);border:1px solid #333;border-radius:6px;color:var(--text);padding:8px 11px;font-size:13px;outline:none;font-family:inherit}
+.fg input,.fg select,.fg textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--text);padding:8px 11px;font-size:13px;outline:none;font-family:inherit}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green)}
 .fg textarea{resize:vertical}
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -140,16 +160,19 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
 .msg{margin-top:8px;font-size:12px;padding:8px 12px;border-radius:6px;display:none}
 .msg.ok{background:rgba(0,166,81,.12);color:var(--gl);border:1px solid rgba(0,166,81,.2)}
 .msg.er{background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.2)}
-.ut{background:var(--d2);border:1px solid #272727;border-radius:var(--r);overflow:hidden;overflow-x:auto}
+
+.ut{background:rgba(20,20,20,0.9);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);overflow:hidden;overflow-x:auto}
 .ut table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
-.ut th{background:var(--d3);padding:9px 12px;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.5px;text-align:left;white-space:nowrap}
-.ut td{padding:8px 12px;border-bottom:1px solid #1e1e1e}
+.ut th{background:rgba(30,30,30,0.9);padding:9px 12px;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.5px;text-align:left;white-space:nowrap}
+.ut td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
 .ut tr:last-child td{border:none}
-.mb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;align-items:center;justify-content:center;padding:16px}
+
+/* MODAL */
+.mb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
 .mb.show{display:flex}
-.md{background:var(--d2);border:1px solid rgba(245,166,35,.3);border-radius:14px;padding:24px;width:100%;max-width:440px;position:relative;max-height:90vh;overflow-y:auto}
-.md.sm{border-color:#333;max-width:400px}
-.mc{position:absolute;top:14px;right:14px;background:var(--d4);border:none;color:var(--mut);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px}
+.md{background:rgba(22,22,22,0.98);border:1px solid rgba(245,166,35,.3);border-radius:14px;padding:24px;width:100%;max-width:440px;position:relative;max-height:90vh;overflow-y:auto}
+.md.sm{border-color:rgba(0,166,81,.3);max-width:400px}
+.mc{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.08);border:none;color:var(--mut);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px}
 .md h2{font-size:18px;font-weight:900;color:var(--gold);margin-bottom:4px}
 .md h2.gn{color:var(--green)}
 .md .sub{font-size:12px;color:var(--mut);margin-bottom:16px}
@@ -157,17 +180,35 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
 .pb .pr2{font-size:30px;font-weight:900;color:var(--gold)}
 .pb .cy{font-size:12px;color:var(--mut)}
 .bl{list-style:none;margin-bottom:16px}
-.bl li{display:flex;align-items:center;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px solid #1e1e1e}
+.bl li{display:flex;align-items:center;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)}
 .bl li:last-child{border:none}
-.bl .st{color:var(--gold)}
-.pi{background:var(--d3);border-radius:7px;padding:10px 12px;font-size:12px;color:var(--mut);margin-bottom:14px;line-height:1.7}
+.bl .st2{color:var(--gold)}
+.pi{background:rgba(255,255,255,.05);border-radius:7px;padding:10px 12px;font-size:12px;color:var(--mut);margin-bottom:14px;line-height:1.7}
 .pi strong{color:var(--gold)}
-.ats{display:flex;gap:0;margin-bottom:18px;border-bottom:2px solid #333}
-.at2{flex:1;padding:10px;background:none;border:none;color:var(--mut);font-size:13px;font-weight:700;cursor:pointer;text-align:center;border-bottom:2px solid transparent;margin-bottom:-2px}
-.at2.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* AUTH TABS */
+.ats{display:flex;gap:0;margin-bottom:18px;border-bottom:2px solid rgba(255,255,255,.1)}
+.at2b{flex:1;padding:10px;background:none;border:none;color:var(--mut);font-size:13px;font-weight:700;cursor:pointer;text-align:center;border-bottom:2px solid transparent;margin-bottom:-2px}
+.at2b.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* INPUT WITH ICON */
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:40px}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--mut);font-size:16px;padding:2px}
+.pw-eye:hover{color:var(--text)}
+
+/* UPLOAD */
+.upload-area{border:2px dashed rgba(255,255,255,.15);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:12px}
+.upload-area:hover{border-color:var(--gold)}
+.upload-area.has-file{border-color:var(--green);background:rgba(0,166,81,.05)}
+.upload-preview{max-width:100%;max-height:150px;border-radius:6px;margin-top:8px}
+.vip-status-box{border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.vip-status-box.pending{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--gold)}
+.vip-status-box.approved{background:rgba(0,166,81,.08);border:1px solid rgba(0,166,81,.2);color:var(--gl)}
+
 .page{display:none}
 .page.active{display:block}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--d3);border:1px solid var(--green);color:var(--text);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;animation:si .3s ease;max-width:300px}
+.toast{position:fixed;bottom:20px;right:20px;background:rgba(30,30,30,0.98);border:1px solid var(--green);color:var(--text);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;animation:si .3s ease;max-width:300px}
 .toast.er{border-color:var(--red)}
 @keyframes si{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
 .spin{width:18px;height:18px;border:2px solid #333;border-top-color:var(--green);border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
@@ -175,23 +216,25 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
 .ld2{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--mut);font-size:14px;gap:8px}
 .empty{text-align:center;padding:40px 20px;color:var(--mut);font-size:14px}
 .empty .em{font-size:36px;margin-bottom:8px}
-/* Screenshot upload */
-.upload-area{border:2px dashed #333;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:12px}
-.upload-area:hover{border-color:var(--gold)}
-.upload-area.has-file{border-color:var(--green);background:rgba(0,166,81,.05)}
-.upload-preview{max-width:100%;max-height:150px;border-radius:6px;margin-top:8px}
-/* VIP request status */
-.vip-status-box{border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.6}
-.vip-status-box.pending{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--gold)}
-.vip-status-box.approved{background:rgba(0,166,81,.08);border:1px solid rgba(0,166,81,.2);color:var(--gl)}
-/* Screenshot viewer */
-.ss-img{width:100%;border-radius:8px;margin-top:10px;border:1px solid #333}
+
+/* password strength */
+.pw-strength{height:3px;border-radius:2px;margin-top:4px;transition:all .3s;background:#333}
+.pw-strength.weak{background:var(--red);width:33%}
+.pw-strength.medium{background:var(--gold);width:66%}
+.pw-strength.strong{background:var(--green);width:100%}
+
 @media(max-width:960px){.sidebar,.rs{display:none}}
-@media(max-width:600px){.hero h1{font-size:24px}.fg2{grid-template-columns:1fr}}
+@media(max-width:600px){.hero h1{font-size:26px}.fg2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
+<!-- BACKGROUND -->
+<div class="bg-wrap">
+  <img src="https://raw.githubusercontent.com/Cyberdreamer001/cyberpredict/main/bg.jpg" alt="bg">
+</div>
+
+<div class="site-wrap">
 <nav>
   <a href="#" class="logo" onclick="showPage('free');return false">
     <div class="logo-icon">⚽</div>Cyber<em>Predict</em>
@@ -262,25 +305,18 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
   </div>
 
   <div class="content">
-    <!-- FREE TIPS -->
     <div class="page active" id="page-free">
       <div class="sh"><div class="st">Today's Free Tips</div><span class="pill g" id="fc">0 Picks</span></div>
       <div id="fpl"><div class="ld2"><div class="spin"></div>Loading picks...</div></div>
     </div>
-
-    <!-- ACCUMULATOR -->
     <div class="page" id="page-acca">
       <div class="sh"><div class="st">Today's Accumulators</div><span class="pill g">Expert Picks</span></div>
       <div id="acl"><div class="ld2"><div class="spin"></div>Loading...</div></div>
     </div>
-
-    <!-- VIP -->
     <div class="page" id="page-vip">
       <div class="sh"><div class="st" style="color:var(--gold)">🔑 VIP Premium Tips</div><span class="pill gold">Members Only</span></div>
       <div id="vip-sec"><div class="ld2"><div class="spin"></div>Checking access...</div></div>
     </div>
-
-    <!-- RESULTS -->
     <div class="page" id="page-results">
       <div class="sh"><div class="st">Recent Results</div><span class="pill g">Last 20</span></div>
       <div class="rt"><table>
@@ -295,17 +331,14 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
         <div class="st">⚙️ Admin Panel</div>
         <span class="pill" style="background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.25)">Private</span>
       </div>
-
       <div class="ac" style="margin-bottom:14px">
         <h3 class="gd">🔔 VIP Subscription Requests</h3>
         <div id="vr-list"><div class="ld2"><div class="spin"></div></div></div>
       </div>
-
       <div class="ac" style="margin-bottom:14px">
         <h3 class="gn">👥 All Users</h3>
         <div id="ul"><div class="ld2"><div class="spin"></div></div></div>
       </div>
-
       <div class="ac">
         <h3 class="gn">➕ Add Free Pick</h3>
         <div class="fg2">
@@ -319,7 +352,7 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
           <div class="fg"><label>Match Date</label><input type="date" id="ad"></div>
         </div>
         <div class="fg2">
-          <div class="fg"><label>Match Time</label><input type="time" id="at" value="20:00"></div>
+          <div class="fg"><label>Match Time</label><input type="time" id="atm" value="20:00"></div>
           <div class="fg"><label>Confidence %</label><input type="number" id="ac2" placeholder="75" min="1" max="100"></div>
         </div>
         <div class="fg"><label>Our Pick</label><input id="ap" placeholder="e.g. Home Win / Over 2.5 / BTTS"></div>
@@ -334,7 +367,6 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
         <button class="btn gn" onclick="addFreePick()">+ Add Free Pick</button>
         <div class="msg ok" id="fm"></div>
       </div>
-
       <div class="ac" style="border-color:rgba(245,166,35,.2)">
         <h3 class="gd">🔑 Add VIP Pick (5-Odds Game)</h3>
         <div class="fg2">
@@ -357,7 +389,6 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
         <button class="btn gd" onclick="addVIPPick()">🔑 Add VIP Pick</button>
         <div class="msg ok" id="vm"></div>
       </div>
-
       <div class="ac">
         <h3 class="gn">📋 Add Accumulator</h3>
         <div class="fg2">
@@ -384,7 +415,7 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
       <div class="fdr"><span style="color:var(--mut);font-size:12px">Barcelona</span><div class="fds"><div class="fd w">W</div><div class="fd d">D</div><div class="fd w">W</div><div class="fd w">W</div><div class="fd w">W</div></div></div>
     </div>
     <div class="wid"><div class="wt">🔥 Today's Hot Tips</div><div id="htw"><div style="color:var(--mut);font-size:12px;text-align:center;padding:10px">Loading...</div></div></div>
-    <div class="wid" style="background:linear-gradient(135deg,rgba(245,166,35,.06),var(--d2));border-color:rgba(245,166,35,.2)">
+    <div class="wid" style="background:rgba(18,12,0,0.88);border-color:rgba(245,166,35,.2)">
       <div class="wt" style="color:var(--gold)">🔑 VIP Access</div>
       <p style="font-size:12px;color:var(--mut);margin-bottom:10px;line-height:1.5">Premium 5-odds games, expert analysis & guaranteed selections.</p>
       <div style="font-size:22px;font-weight:900;color:var(--gold);margin-bottom:8px">₦10,000<span style="font-size:12px;font-weight:400;color:var(--mut)">/mo</span></div>
@@ -393,7 +424,7 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
   </div>
 </div>
 
-<!-- VIP SUBSCRIPTION MODAL -->
+<!-- VIP MODAL -->
 <div class="mb" id="subModal">
   <div class="md">
     <button class="mc" onclick="closeSub()">✕</button>
@@ -401,12 +432,12 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
     <p class="sub">Join hundreds of winners with our premium picks</p>
     <div class="pb"><div class="pr2">₦10,000</div><div class="cy">per month · cancel anytime</div></div>
     <ul class="bl">
-      <li><span class="st">★</span>Daily 5-odds VIP games</li>
-      <li><span class="st">★</span>Manually curated expert picks</li>
-      <li><span class="st">★</span>In-depth match analysis</li>
-      <li><span class="st">★</span>Early access before odds drop</li>
-      <li><span class="st">★</span>WhatsApp VIP group access</li>
-      <li><span class="st">★</span>24/7 support</li>
+      <li><span class="st2">★</span>Daily 5-odds VIP games</li>
+      <li><span class="st2">★</span>Manually curated expert picks</li>
+      <li><span class="st2">★</span>In-depth match analysis</li>
+      <li><span class="st2">★</span>Early access before odds drop</li>
+      <li><span class="st2">★</span>WhatsApp VIP group access</li>
+      <li><span class="st2">★</span>24/7 support</li>
     </ul>
     <div id="sub-not-logged" style="display:none">
       <div style="background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.2);border-radius:8px;padding:12px;text-align:center;font-size:13px;color:var(--mut);margin-bottom:14px">
@@ -419,7 +450,7 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
         Bank: <strong>OPAY</strong><br>
         Account No: <strong>8085137325</strong><br>
         Name: <strong>Cyprian Nyuykonge Valentine</strong><br><br>
-        Then upload your payment screenshot below. VIP activated within <strong>30 minutes</strong>.
+        Upload your payment screenshot below. VIP activated within <strong>30 minutes</strong>.
       </div>
       <div class="fg">
         <label>Payment Screenshot</label>
@@ -440,58 +471,77 @@ nav{background:var(--dark);border-bottom:2px solid var(--green);padding:0 16px;d
   <div class="md sm">
     <button class="mc" onclick="closeAuth()">✕</button>
     <div class="ats">
-      <button class="at2 active" id="lt" onclick="switchAuth('login')">Login</button>
-      <button class="at2" id="rt" onclick="switchAuth('register')">Register</button>
+      <button class="at2b active" id="lt" onclick="switchAuth('login')">Login</button>
+      <button class="at2b" id="rt2" onclick="switchAuth('register')">Register</button>
     </div>
+
     <!-- LOGIN -->
     <div id="lf">
       <div class="fg"><label>Email</label><input type="email" id="le" placeholder="your@email.com"></div>
-      <div class="fg"><label>Password</label><input type="password" id="lp" placeholder="Password"></div>
+      <div class="fg">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="lp" placeholder="Your password">
+          <button class="pw-eye" type="button" onclick="togglePw('lp',this)">👁</button>
+        </div>
+      </div>
       <button class="btn gn" style="width:100%;margin-bottom:10px" onclick="doLogin()">Login</button>
       <div id="resend-wrap" style="display:none;text-align:center;margin-bottom:10px">
-        <span style="font-size:12px;color:var(--mut)">Didn't get the email? </span>
-        <a href="#" onclick="resendVerification()" style="font-size:12px;color:var(--gl)">Resend verification</a>
+        <span style="font-size:12px;color:var(--mut)">Didn't get verification email? </span>
+        <a href="#" onclick="resendVerification()" style="font-size:12px;color:var(--gl)">Resend it</a>
       </div>
       <div class="msg er" id="le2"></div>
     </div>
+
     <!-- REGISTER -->
     <div id="rf" style="display:none">
       <div class="fg"><label>Full Name</label><input id="rn" placeholder="Your full name"></div>
       <div class="fg"><label>Email</label><input type="email" id="re" placeholder="your@email.com"></div>
       <div class="fg"><label>Phone</label><input type="tel" id="rph" placeholder="e.g. 08012345678"></div>
-      <div class="fg"><label>Password (min 6 characters)</label><input type="password" id="rp" placeholder="Choose a password"></div>
+      <div class="fg">
+        <label>Password (min 6 characters)</label>
+        <div class="pw-wrap">
+          <input type="password" id="rp" placeholder="Choose a strong password" oninput="checkPwStrength(this.value)">
+          <button class="pw-eye" type="button" onclick="togglePw('rp',this)">👁</button>
+        </div>
+        <div class="pw-strength" id="pw-str"></div>
+      </div>
+      <div class="fg">
+        <label>Confirm Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="rcp" placeholder="Re-enter your password">
+          <button class="pw-eye" type="button" onclick="togglePw('rcp',this)">👁</button>
+        </div>
+        <div id="pw-match" style="font-size:11px;margin-top:3px"></div>
+      </div>
       <button class="btn gn" style="width:100%" onclick="doRegister()">Create Account</button>
       <div class="msg er" id="re2"></div>
     </div>
   </div>
 </div>
 
+</div><!-- /site-wrap -->
+
 <script>
-const API = 'https://cyberpredict-api.onrender.com';
-let currentUser = null;
-let token = localStorage.getItem('cp_token');
-let screenshotB64 = null;
-let lastLoginEmail = '';
+const API='https://cyberpredict-api.onrender.com';
+let currentUser=null,token=localStorage.getItem('cp_token'),screenshotB64=null,lastLoginEmail='';
 
-async function init() {
-  const today = new Date().toISOString().split('T')[0];
-  ['ad','vd','acd'].forEach(id => { const e=document.getElementById(id); if(e) e.value=today; });
+async function init(){
+  const today=new Date().toISOString().split('T')[0];
+  ['ad','vd','acd'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});
   if(token) await loadUser();
-  loadFreePicks();
-  loadResults();
-  showPage('free');
+  loadFreePicks(); loadResults(); showPage('free');
 }
 
-async function loadUser() {
-  try {
-    const res = await fetch(`${API}/api/auth/me`, {headers:{Authorization:`Bearer ${token}`}});
+async function loadUser(){
+  try{
+    const res=await fetch(`${API}/api/auth/me`,{headers:{Authorization:`Bearer ${token}`}});
     if(!res.ok){token=null;localStorage.removeItem('cp_token');return;}
-    currentUser = await res.json();
-    updateNav();
-  } catch(e){}
+    currentUser=await res.json(); updateNav();
+  }catch(e){}
 }
 
-function updateNav() {
+function updateNav(){
   if(!currentUser){
     document.getElementById('nav-guest').style.display='';
     document.getElementById('nav-user').style.display='none';
@@ -500,98 +550,117 @@ function updateNav() {
   }
   document.getElementById('nav-guest').style.display='none';
   document.getElementById('nav-user').style.display='';
-  document.getElementById('nav-name').textContent = currentUser.name.split(' ')[0];
-  if(currentUser.is_admin) { document.getElementById('admin-tab').style.display=''; loadAdminData(); }
-  if(currentUser.is_vip || currentUser.is_admin){
+  document.getElementById('nav-name').textContent=currentUser.name.split(' ')[0];
+  if(currentUser.is_admin){document.getElementById('admin-tab').style.display='';loadAdminData();}
+  if(currentUser.is_vip||currentUser.is_admin){
     document.getElementById('nav-vip-btn').style.display='';
     document.getElementById('nav-sub-btn').style.display='none';
-  } else {
+  }else{
     document.getElementById('nav-vip-btn').style.display='none';
     document.getElementById('nav-sub-btn').style.display='';
   }
 }
 
+// ── PASSWORD HELPERS ──────────────────────────────────────────────────────────
+function togglePw(id,btn){
+  const inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁';}
+}
+function checkPwStrength(pw){
+  const bar=document.getElementById('pw-str');
+  if(!pw){bar.className='pw-strength';return;}
+  if(pw.length<6){bar.className='pw-strength weak';}
+  else if(pw.length<10){bar.className='pw-strength medium';}
+  else{bar.className='pw-strength strong';}
+  // Also check confirm match
+  const cp=document.getElementById('rcp').value;
+  if(cp) checkPwMatch();
+}
+function checkPwMatch(){
+  const pw=document.getElementById('rp').value;
+  const cp=document.getElementById('rcp').value;
+  const el=document.getElementById('pw-match');
+  if(!cp){el.textContent='';return;}
+  if(pw===cp){el.textContent='✅ Passwords match';el.style.color='var(--gl)';}
+  else{el.textContent='❌ Passwords do not match';el.style.color='var(--red)';}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const rcp=document.getElementById('rcp');
+  if(rcp) rcp.addEventListener('input',checkPwMatch);
+});
+
 // ── AUTH ──────────────────────────────────────────────────────────────────────
-async function doLogin() {
-  const email = document.getElementById('le').value.trim();
-  const pw = document.getElementById('lp').value;
+async function doLogin(){
+  const email=document.getElementById('le').value.trim();
+  const pw=document.getElementById('lp').value;
   if(!email||!pw) return showErr('le2','Fill all fields');
-  lastLoginEmail = email;
-  try {
-    const res = await fetch(`${API}/api/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
-    const data = await res.json();
+  lastLoginEmail=email;
+  try{
+    const res=await fetch(`${API}/api/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
+    const data=await res.json();
     if(!res.ok){
-      showErr('le2', data.error||'Login failed');
+      showErr('le2',data.error||'Login failed');
       if(data.needs_verification) document.getElementById('resend-wrap').style.display='block';
       return;
     }
-    token=data.token; localStorage.setItem('cp_token',token);
-    currentUser=data.user; closeAuth(); updateNav();
+    token=data.token;localStorage.setItem('cp_token',token);
+    currentUser=data.user;closeAuth();updateNav();
     toast('✅ Welcome back, '+currentUser.name.split(' ')[0]+'!');
     if(currentUser.is_vip||currentUser.is_admin) loadVIPPicks();
-  } catch(e){showErr('le2','Server error. Try again.');}
+  }catch(e){showErr('le2','Server error. Try again.');}
 }
 
-async function doRegister() {
+async function doRegister(){
   const name=document.getElementById('rn').value.trim();
   const email=document.getElementById('re').value.trim();
   const phone=document.getElementById('rph').value.trim();
   const pw=document.getElementById('rp').value;
-  if(!name||!email||!phone||!pw) return showErr('re2','Fill all fields');
+  const cpw=document.getElementById('rcp').value;
+  if(!name||!email||!phone||!pw||!cpw) return showErr('re2','Please fill all fields');
   if(pw.length<6) return showErr('re2','Password must be at least 6 characters');
-  try {
-    const res = await fetch(`${API}/api/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,password:pw})});
-    const data = await res.json();
+  if(pw!==cpw) return showErr('re2','Passwords do not match');
+  try{
+    const res=await fetch(`${API}/api/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,password:pw})});
+    const data=await res.json();
     if(!res.ok) return showErr('re2',data.error||'Registration failed');
-    closeAuth();
-    // Show success — don't log them in, they must verify first
-    showVerifyMsg(email);
+    closeAuth();showVerifyMsg(email);
     toast('📧 Check your email to verify your account!');
-  } catch(e){showErr('re2','Server error. Try again.');}
+  }catch(e){showErr('re2','Server error. Try again.');}
 }
 
-function showVerifyMsg(email) {
-  // Replace auth modal with a friendly message
-  const modal = document.getElementById('authModal');
-  modal.classList.add('show');
-  const md = modal.querySelector('.md');
-  md.innerHTML = `
+function showVerifyMsg(email){
+  document.getElementById('authModal').classList.add('show');
+  const md=document.getElementById('authModal').querySelector('.md');
+  md.innerHTML=`
     <button class="mc" onclick="closeAuth()">✕</button>
     <div style="text-align:center;padding:10px 0">
       <div style="font-size:50px;margin-bottom:12px">📧</div>
       <h2 class="gn" style="margin-bottom:8px">Verify Your Email</h2>
       <p style="color:var(--mut);font-size:13px;line-height:1.6;margin-bottom:16px">
         We sent a verification link to<br><strong style="color:var(--text)">${email}</strong><br><br>
-        Click the link in the email to activate your account, then come back to login.
+        Click the link in your email to activate your account, then come back to login.
       </p>
       <button class="btn gn" style="width:100%;margin-bottom:10px" onclick="closeAuth();openAuth('login')">Go to Login</button>
       <a href="#" onclick="resendVerificationTo('${email}')" style="font-size:12px;color:var(--gl)">Resend verification email</a>
     </div>`;
 }
 
-async function resendVerification() {
-  if(!lastLoginEmail) return;
-  resendVerificationTo(lastLoginEmail);
+async function resendVerification(){if(lastLoginEmail)resendVerificationTo(lastLoginEmail);}
+async function resendVerificationTo(email){
+  try{
+    const res=await fetch(`${API}/api/auth/resend-verification`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const data=await res.json();
+    toast(data.success?'📧 Verification email resent!':'❌ '+data.error,!data.success);
+  }catch(e){toast('❌ Server error',true);}
 }
 
-async function resendVerificationTo(email) {
-  try {
-    const res = await fetch(`${API}/api/auth/resend-verification`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
-    const data = await res.json();
-    toast(data.success ? '📧 Verification email resent!' : '❌ '+data.error, !data.success);
-  } catch(e){toast('❌ Server error',true);}
-}
-
-function logout() {
-  token=null; currentUser=null; localStorage.removeItem('cp_token');
-  updateNav(); showPage('free');
-  toast('👋 Logged out');
-}
+function logout(){token=null;currentUser=null;localStorage.removeItem('cp_token');updateNav();showPage('free');toast('👋 Logged out');}
 
 // ── PICKS ─────────────────────────────────────────────────────────────────────
-async function loadFreePicks() {
+async function loadFreePicks(){
   const list=document.getElementById('fpl');
-  try {
+  try{
     const res=await fetch(`${API}/api/picks/free`);
     const picks=await res.json();
     document.getElementById('fc').textContent=picks.length+' Picks';
@@ -599,10 +668,10 @@ async function loadFreePicks() {
     if(!picks.length){list.innerHTML='<div class="empty"><div class="em">📭</div>No picks yet. Check back soon!</div>';return;}
     list.innerHTML=picks.map(p=>renderFreeCard(p)).join('');
     document.getElementById('htw').innerHTML=picks.slice(0,3).map(p=>`<div class="ht"><div class="hm">${p.home_team} vs ${p.away_team}</div><div class="hp">${p.pick}</div></div>`).join('');
-  } catch(e){list.innerHTML='<div class="empty">⚠️ Could not load picks.</div>';}
+  }catch(e){list.innerHTML='<div class="empty">⚠️ Could not load picks.</div>';}
 }
 
-function renderFreeCard(p) {
+function renderFreeCard(p){
   const isAdmin=currentUser&&currentUser.is_admin;
   const del=isAdmin?`<button class="db" onclick="deleteFreePick('${p.id}')">✕</button>`:'';
   return `<div class="card" id="card-${p.id}">
@@ -627,33 +696,26 @@ function renderFreeCard(p) {
   </div>`;
 }
 
-async function deleteFreePick(id) {
-  if(!confirm('Delete this pick?')) return;
-  try {
-    const res=await fetch(`${API}/api/picks/free/${id}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});
-    if(res.ok){document.getElementById('card-'+id)?.remove();toast('Pick deleted');loadFreePicks();}
-  } catch(e){}
+async function deleteFreePick(id){
+  if(!confirm('Delete this pick?'))return;
+  try{const res=await fetch(`${API}/api/picks/free/${id}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});if(res.ok){document.getElementById('card-'+id)?.remove();toast('Pick deleted');loadFreePicks();}}catch(e){}
 }
 
-async function loadVIPPicks() {
+async function loadVIPPicks(){
   const sec=document.getElementById('vip-sec');
   if(!currentUser){renderLockScreen();return;}
   sec.innerHTML='<div class="ld2"><div class="spin"></div>Loading VIP picks...</div>';
-  try {
+  try{
     const res=await fetch(`${API}/api/picks/vip`,{headers:{Authorization:`Bearer ${token}`}});
-    if(res.status===403){
-      // Check if they have a pending request
-      renderLockScreen();
-      return;
-    }
+    if(res.status===403){renderLockScreen();return;}
     const picks=await res.json();
     const exp=currentUser.vip_expires?` — Expires ${currentUser.vip_expires}`:'';
     sec.innerHTML=`<div class="vip-status-box approved">✅ VIP Active${exp}</div>`
       +(picks.length?picks.map(p=>renderVIPCard(p)).join(''):'<div class="empty"><div class="em">⏳</div>No VIP picks for today yet. Check back soon!</div>');
-  } catch(e){sec.innerHTML='<div class="empty">⚠️ Error loading VIP picks</div>';}
+  }catch(e){sec.innerHTML='<div class="empty">⚠️ Error loading VIP picks</div>';}
 }
 
-function renderVIPCard(p) {
+function renderVIPCard(p){
   const isAdmin=currentUser&&currentUser.is_admin;
   const del=isAdmin?`<button class="db" onclick="deleteVIPPick('${p.id}')">✕</button>`:'';
   return `<div class="vc">
@@ -673,76 +735,43 @@ function renderVIPCard(p) {
   </div>`;
 }
 
-async function deleteVIPPick(id) {
-  if(!confirm('Delete this VIP pick?')) return;
-  try {
-    const res=await fetch(`${API}/api/picks/vip/${id}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});
-    if(res.ok){toast('VIP pick deleted');loadVIPPicks();}
-  } catch(e){}
+async function deleteVIPPick(id){
+  if(!confirm('Delete this VIP pick?'))return;
+  try{const res=await fetch(`${API}/api/picks/vip/${id}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});if(res.ok){toast('VIP pick deleted');loadVIPPicks();}}catch(e){}
 }
 
-function renderLockScreen() {
+function renderLockScreen(){
   const sec=document.getElementById('vip-sec');
-  const loginLink = !currentUser?`<p style="margin-top:10px;font-size:12px;color:var(--mut)">Already subscribed? <a href="#" onclick="openAuth('login');return false" style="color:var(--gl)">Login here</a></p>`:'';
-  const subBtn = currentUser
-    ? `<button class="ub" onclick="openSub()">🔑 Subscribe to Unlock VIP</button>`
-    : `<button class="ub" onclick="openAuth('register')">📝 Register & Subscribe</button>`;
-  sec.innerHTML=`<div class="lw">
-    <div class="lb">
-      <div class="vc"><div class="vch"><span class="vl">Champions League 🏟️</span><span class="vob">⭐ 5.40 Odds</span></div>
-        <div class="cb"><div class="teams"><div class="team"><div class="bdg">PSG</div><div><div class="tn">PSG</div></div></div><div class="vs"><div class="vst">VS</div></div><div class="team away"><div class="bdg">BAY</div><div><div class="tn">Bayern</div></div></div></div></div></div>
-    </div>
-    <div class="lo">
-      <div class="li">🔐</div>
-      <div class="lt">VIP Members Only</div>
-      <div class="ld">Get access to our premium 5-odds games, expert picks, and winning selections — manually curated daily by our analysts.</div>
-      <div class="vp2">₦10,000 <small>/month</small></div>
-      ${subBtn}
-      ${loginLink}
-    </div>
-  </div>`;
+  const loginLink=!currentUser?`<p style="margin-top:10px;font-size:12px;color:var(--mut)">Already subscribed? <a href="#" onclick="openAuth('login');return false" style="color:var(--gl)">Login here</a></p>`:'';
+  const subBtn=currentUser?`<button class="ub" onclick="openSub()">🔑 Subscribe to Unlock VIP</button>`:`<button class="ub" onclick="openAuth('register')">📝 Register & Subscribe</button>`;
+  sec.innerHTML=`<div class="lw"><div class="lb"><div class="vc"><div class="vch"><span class="vl">Champions League 🏟️</span><span class="vob">⭐ 5.40 Odds</span></div><div class="cb"><div class="teams"><div class="team"><div class="bdg">PSG</div><div><div class="tn">PSG</div></div></div><div class="vs"><div class="vst">VS</div></div><div class="team away"><div class="bdg">BAY</div><div><div class="tn">Bayern</div></div></div></div></div></div></div>
+    <div class="lo"><div class="li">🔐</div><div class="lt">VIP Members Only</div><div class="ld">Get access to our premium 5-odds games, expert picks, and winning selections — manually curated daily.</div><div class="vp2">₦10,000 <small>/month</small></div>${subBtn}${loginLink}</div></div>`;
 }
 
-// ── SCREENSHOT UPLOAD ─────────────────────────────────────────────────────────
-function handleScreenshot(input) {
-  const file=input.files[0];
-  if(!file) return;
+function handleScreenshot(input){
+  const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
     screenshotB64=e.target.result;
     document.getElementById('upload-placeholder').style.display='none';
-    const img=document.getElementById('upload-preview');
-    img.src=screenshotB64; img.style.display='block';
+    const img=document.getElementById('upload-preview');img.src=screenshotB64;img.style.display='block';
     document.getElementById('upload-area').classList.add('has-file');
-  };
-  reader.readAsDataURL(file);
+  };reader.readAsDataURL(file);
 }
 
-// ── VIP SUBSCRIPTION ──────────────────────────────────────────────────────────
-function openSub() {
+function openSub(){
   document.getElementById('subModal').classList.add('show');
-  if(!currentUser){
-    document.getElementById('sub-not-logged').style.display='block';
-    document.getElementById('sub-form').style.display='none';
-  } else {
-    document.getElementById('sub-not-logged').style.display='none';
-    document.getElementById('sub-form').style.display='block';
-  }
+  if(!currentUser){document.getElementById('sub-not-logged').style.display='block';document.getElementById('sub-form').style.display='none';}
+  else{document.getElementById('sub-not-logged').style.display='none';document.getElementById('sub-form').style.display='block';}
 }
 function closeSub(){document.getElementById('subModal').classList.remove('show');}
 function closeSubOpenAuth(){closeSub();openAuth('login');}
 
-async function submitVIPRequest() {
+async function submitVIPRequest(){
   if(!currentUser){toast('❌ Please login first',true);return;}
-  if(!screenshotB64){
-    showMsg2('sub-msg','er','⚠️ Please upload your payment screenshot');return;
-  }
-  try {
-    const res=await fetch(`${API}/api/vip/request`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},
-      body:JSON.stringify({screenshot:screenshotB64})
-    });
+  if(!screenshotB64){showMsg2('sub-msg','er','⚠️ Please upload your payment screenshot');return;}
+  try{
+    const res=await fetch(`${API}/api/vip/request`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({screenshot:screenshotB64})});
     const data=await res.json();
     if(res.ok){
       showMsg2('sub-msg','ok','✅ '+data.message);
@@ -752,185 +781,98 @@ async function submitVIPRequest() {
       document.getElementById('upload-area').classList.remove('has-file');
       document.getElementById('ss-input').value='';
       setTimeout(closeSub,3000);
-    } else {
-      showMsg2('sub-msg','er',data.error||'Error submitting request');
-    }
-  } catch(e){showMsg2('sub-msg','er','Server error. Try again.');}
+    }else{showMsg2('sub-msg','er',data.error||'Error submitting');}
+  }catch(e){showMsg2('sub-msg','er','Server error. Try again.');}
 }
 
-// ── ACCUMULATOR ───────────────────────────────────────────────────────────────
-async function loadAccumulators() {
+async function loadAccumulators(){
   const list=document.getElementById('acl');
-  try {
-    const res=await fetch(`${API}/api/accumulators`);
-    const accas=await res.json();
+  try{
+    const res=await fetch(`${API}/api/accumulators`);const accas=await res.json();
     if(!accas.length){list.innerHTML='<div class="empty"><div class="em">📋</div>No accumulators yet.</div>';return;}
-    list.innerHTML=accas.map(a=>`<div class="ab">
-      <div class="ah"><div class="at">${a.title}</div><div class="ao">Odds: ${a.total_odds}</div></div>
-      ${a.picks.map(p=>`<div class="ap"><span>${p.match}</span><span class="as2">${p.pick} — ${p.odds}</span></div>`).join('')}
-      <div style="text-align:center;font-size:12px;color:var(--mut);margin-top:8px">Stake ₦1,000 → Potential Win <strong style="color:var(--green)">₦${(1000*a.total_odds).toLocaleString()}</strong></div>
-    </div>`).join('');
-  } catch(e){list.innerHTML='<div class="empty">⚠️ Error loading accumulators</div>';}
+    list.innerHTML=accas.map(a=>`<div class="ab"><div class="ah"><div class="at2">${a.title}</div><div class="ao">Odds: ${a.total_odds}</div></div>${a.picks.map(p=>`<div class="ap"><span>${p.match}</span><span class="as2">${p.pick} — ${p.odds}</span></div>`).join('')}<div style="text-align:center;font-size:12px;color:var(--mut);margin-top:8px">Stake ₦1,000 → Potential Win <strong style="color:var(--green)">₦${(1000*a.total_odds).toLocaleString()}</strong></div></div>`).join('');
+  }catch(e){list.innerHTML='<div class="empty">⚠️ Error</div>';}
 }
 
-async function loadResults() {
-  try {
-    const res=await fetch(`${API}/api/results`);
-    const results=await res.json();
+async function loadResults(){
+  try{
+    const res=await fetch(`${API}/api/results`);const results=await res.json();
     const tb=document.getElementById('rb');
     if(!results.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--mut)">No results yet</td></tr>';return;}
-    tb.innerHTML=results.map(r=>{
-      const chip=r.result==='won'?'<span class="won">✓ WON</span>':r.result==='lost'?'<span class="lost">✗ LOST</span>':'<span class="pend">Pending</span>';
-      return `<tr><td style="color:var(--mut)">${r.match_date}</td><td>${r.home_team} vs ${r.away_team}</td><td style="color:var(--gl)">${r.pick}</td><td>—</td><td>${chip}</td></tr>`;
-    }).join('');
-  } catch(e){}
+    tb.innerHTML=results.map(r=>{const chip=r.result==='won'?'<span class="won">✓ WON</span>':r.result==='lost'?'<span class="lost">✗ LOST</span>':'<span class="pend">Pending</span>';return`<tr><td style="color:var(--mut)">${r.match_date}</td><td>${r.home_team} vs ${r.away_team}</td><td style="color:var(--gl)">${r.pick}</td><td>—</td><td>${chip}</td></tr>`;}).join('');
+  }catch(e){}
 }
 
-// ── ADMIN ─────────────────────────────────────────────────────────────────────
 async function loadAdminData(){loadVIPRequests();loadUsers();}
 
-async function loadVIPRequests() {
-  try {
+async function loadVIPRequests(){
+  try{
     const res=await fetch(`${API}/api/vip/requests`,{headers:{Authorization:`Bearer ${token}`}});
-    const reqs=await res.json();
-    const el=document.getElementById('vr-list');
+    const reqs=await res.json();const el=document.getElementById('vr-list');
     if(!reqs.length){el.innerHTML='<div style="color:var(--mut);font-size:13px;padding:10px 0">No requests yet</div>';return;}
-    el.innerHTML=`<div class="ut"><table>
-      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Date</th><th>Screenshot</th><th>Status</th><th>Action</th></tr></thead>
-      <tbody>${reqs.map(r=>`<tr>
-        <td>${r.name}</td><td style="color:var(--mut)">${r.email}</td><td>${r.phone}</td>
-        <td style="color:var(--mut);font-size:11px">${(r.created_at||'').split('T')[0]||r.created_at.split(' ')[0]}</td>
-        <td>${r.screenshot_url?`<a href="${r.screenshot_url}" target="_blank" style="color:var(--gl);font-size:11px">View 📸</a>`:'<span style="color:var(--mut);font-size:11px">None</span>'}</td>
-        <td><span class="${r.status==='approved'?'won':r.status==='rejected'?'lost':'pend'}">${r.status}</span></td>
-        <td style="display:flex;gap:4px">
-          ${r.status==='pending'?`<button class="btn gn" style="padding:4px 8px;font-size:11px" onclick="approveVIP('${r.id}')">✅ Approve</button>
-          <button class="btn rd" style="padding:4px 8px;font-size:11px" onclick="rejectVIP('${r.id}')">✕ Reject</button>`:'—'}
-        </td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
-  } catch(e){}
+    el.innerHTML=`<div class="ut"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Date</th><th>Screenshot</th><th>Status</th><th>Action</th></tr></thead><tbody>${reqs.map(r=>`<tr><td>${r.name}</td><td style="color:var(--mut)">${r.email}</td><td>${r.phone}</td><td style="color:var(--mut);font-size:11px">${(r.created_at||'').split('T')[0]}</td><td>${r.screenshot_url?`<a href="${r.screenshot_url}" target="_blank" style="color:var(--gl);font-size:11px">View 📸</a>`:'<span style="color:var(--mut);font-size:11px">None</span>'}</td><td><span class="${r.status==='approved'?'won':r.status==='rejected'?'lost':'pend'}">${r.status}</span></td><td style="display:flex;gap:4px">${r.status==='pending'?`<button class="btn gn" style="padding:4px 8px;font-size:11px" onclick="approveVIP('${r.id}')">✅ Approve</button><button class="btn rd" style="padding:4px 8px;font-size:11px" onclick="rejectVIP('${r.id}')">✕ Reject</button>`:'—'}</td></tr>`).join('')}</tbody></table></div>`;
+  }catch(e){}
 }
 
-async function approveVIP(reqId) {
-  if(!confirm('Approve this VIP request? This will activate their VIP for 30 days.')) return;
-  try {
-    const res=await fetch(`${API}/api/vip/approve`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({request_id:reqId})});
-    const data=await res.json();
-    if(res.ok){toast('✅ VIP approved! Email sent to user.');loadVIPRequests();loadUsers();}
-    else toast('❌ '+data.error,true);
-  } catch(e){}
+async function approveVIP(reqId){
+  if(!confirm('Approve this VIP request?'))return;
+  try{const res=await fetch(`${API}/api/vip/approve`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({request_id:reqId})});const data=await res.json();if(res.ok){toast('✅ VIP approved! Email sent to user.');loadVIPRequests();loadUsers();}else toast('❌ '+data.error,true);}catch(e){}
 }
 
-async function rejectVIP(reqId) {
-  if(!confirm('Reject this request?')) return;
-  try {
-    await fetch(`${API}/api/vip/reject`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({request_id:reqId})});
-    toast('Request rejected');loadVIPRequests();
-  } catch(e){}
+async function rejectVIP(reqId){
+  if(!confirm('Reject this request?'))return;
+  try{await fetch(`${API}/api/vip/reject`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({request_id:reqId})});toast('Request rejected');loadVIPRequests();}catch(e){}
 }
 
-async function loadUsers() {
-  try {
+async function loadUsers(){
+  try{
     const res=await fetch(`${API}/api/admin/users`,{headers:{Authorization:`Bearer ${token}`}});
     const users=await res.json();
-    document.getElementById('ul').innerHTML=`<div class="ut"><table>
-      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Verified</th><th>VIP</th><th>Expires</th><th>Joined</th><th>Action</th></tr></thead>
-      <tbody>${users.map(u=>`<tr>
-        <td>${u.name}${u.is_admin?'<span style="color:var(--gold);font-size:10px;margin-left:4px"> ADMIN</span>':''}</td>
-        <td style="color:var(--mut)">${u.email}</td><td>${u.phone}</td>
-        <td>${u.is_verified?'<span class="won">✓</span>':'<span style="color:var(--red);font-size:11px">✗ No</span>'}</td>
-        <td>${u.is_vip?'<span class="won">✓ VIP</span>':'<span style="color:var(--mut);font-size:11px">No</span>'}</td>
-        <td style="color:var(--mut);font-size:11px">${u.vip_expires||'—'}</td>
-        <td style="color:var(--mut);font-size:11px">${(u.created_at||'').split('T')[0]}</td>
-        <td>${!u.is_admin?`<button class="btn rd" style="padding:4px 8px;font-size:11px" onclick="revokeVIP('${u.email}')">Revoke VIP</button>`:'—'}</td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
-  } catch(e){}
+    document.getElementById('ul').innerHTML=`<div class="ut"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Verified</th><th>VIP</th><th>Expires</th><th>Joined</th><th>Action</th></tr></thead><tbody>${users.map(u=>`<tr><td>${u.name}${u.is_admin?'<span style="color:var(--gold);font-size:10px;margin-left:4px"> ADMIN</span>':''}</td><td style="color:var(--mut)">${u.email}</td><td>${u.phone}</td><td>${u.is_verified?'<span class="won">✓</span>':`<span style="color:var(--red);font-size:11px">✗ No</span> <button class="btn gn" style="padding:2px 7px;font-size:10px" onclick="manualVerify('${u.email}')">Verify</button>`}</td><td>${u.is_vip?'<span class="won">✓ VIP</span>':'<span style="color:var(--mut);font-size:11px">No</span>'}</td><td style="color:var(--mut);font-size:11px">${u.vip_expires||'—'}</td><td style="color:var(--mut);font-size:11px">${(u.created_at||'').split('T')[0]}</td><td>${!u.is_admin?`<button class="btn rd" style="padding:4px 8px;font-size:11px" onclick="revokeVIP('${u.email}')">Revoke VIP</button>`:'—'}</td></tr>`).join('')}</tbody></table></div>`;
+  }catch(e){}
 }
 
-async function revokeVIP(email) {
-  if(!confirm(`Revoke VIP for ${email}?`)) return;
-  try {
-    await fetch(`${API}/api/vip/revoke`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({email})});
-    toast('VIP revoked');loadUsers();
-  } catch(e){}
+async function manualVerify(email){
+  if(!confirm(`Manually verify ${email}?`))return;
+  try{
+    const res=await fetch(`${API}/api/admin/verify-user`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({email})});
+    const data=await res.json();
+    if(res.ok){toast('✅ User verified!');loadUsers();}else toast('❌ '+data.error,true);
+  }catch(e){}
 }
 
-async function addFreePick() {
-  const payload={
-    home_team:document.getElementById('ah').value.trim(),
-    away_team:document.getElementById('aa').value.trim(),
-    league:document.getElementById('al').value,
-    match_date:document.getElementById('ad').value,
-    match_time:document.getElementById('at').value,
-    pick:document.getElementById('ap').value.trim(),
-    confidence:parseInt(document.getElementById('ac2').value)||70,
-    odds_home:parseFloat(document.getElementById('ao1').value)||null,
-    odds_draw:parseFloat(document.getElementById('ao2').value)||null,
-    odds_away:parseFloat(document.getElementById('ao3').value)||null,
-    odds_extra:parseFloat(document.getElementById('ao4').value)||null,
-  };
-  if(!payload.home_team||!payload.away_team||!payload.pick||!payload.match_date) return showMsg2('fm','er','Fill required fields');
-  try {
-    const res=await fetch(`${API}/api/picks/free`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});
-    if(res.ok){showMsg2('fm','ok','✅ Free pick added!');loadFreePicks();}
-    else{const d=await res.json();showMsg2('fm','er',d.error||'Error');}
-  } catch(e){showMsg2('fm','er','Server error');}
+async function revokeVIP(email){
+  if(!confirm(`Revoke VIP for ${email}?`))return;
+  try{await fetch(`${API}/api/vip/revoke`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({email})});toast('VIP revoked');loadUsers();}catch(e){}
 }
 
-async function addVIPPick() {
-  const payload={
-    home_team:document.getElementById('vh').value.trim(),
-    away_team:document.getElementById('va').value.trim(),
-    league:document.getElementById('vl').value,
-    match_date:document.getElementById('vd').value,
-    match_time:document.getElementById('vt2').value,
-    pick:document.getElementById('vp').value.trim(),
-    analysis:document.getElementById('van2').value.trim(),
-    combined_odds:parseFloat(document.getElementById('vo').value)||5.0,
-    confidence:parseInt(document.getElementById('vc2').value)||85,
-  };
-  if(!payload.home_team||!payload.away_team||!payload.pick||!payload.match_date) return showMsg2('vm','er','Fill required fields');
-  try {
-    const res=await fetch(`${API}/api/picks/vip`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});
-    if(res.ok){showMsg2('vm','ok','✅ VIP pick added!');}
-    else{const d=await res.json();showMsg2('vm','er',d.error||'Error');}
-  } catch(e){showMsg2('vm','er','Server error');}
+async function addFreePick(){
+  const payload={home_team:document.getElementById('ah').value.trim(),away_team:document.getElementById('aa').value.trim(),league:document.getElementById('al').value,match_date:document.getElementById('ad').value,match_time:document.getElementById('atm').value,pick:document.getElementById('ap').value.trim(),confidence:parseInt(document.getElementById('ac2').value)||70,odds_home:parseFloat(document.getElementById('ao1').value)||null,odds_draw:parseFloat(document.getElementById('ao2').value)||null,odds_away:parseFloat(document.getElementById('ao3').value)||null,odds_extra:parseFloat(document.getElementById('ao4').value)||null};
+  if(!payload.home_team||!payload.away_team||!payload.pick||!payload.match_date)return showMsg2('fm','er','Fill required fields');
+  try{const res=await fetch(`${API}/api/picks/free`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});if(res.ok){showMsg2('fm','ok','✅ Free pick added!');loadFreePicks();}else{const d=await res.json();showMsg2('fm','er',d.error||'Error');}}catch(e){showMsg2('fm','er','Server error');}
 }
 
-async function addAccumulator() {
+async function addVIPPick(){
+  const payload={home_team:document.getElementById('vh').value.trim(),away_team:document.getElementById('va').value.trim(),league:document.getElementById('vl').value,match_date:document.getElementById('vd').value,match_time:document.getElementById('vt2').value,pick:document.getElementById('vp').value.trim(),analysis:document.getElementById('van2').value.trim(),combined_odds:parseFloat(document.getElementById('vo').value)||5.0,confidence:parseInt(document.getElementById('vc2').value)||85};
+  if(!payload.home_team||!payload.away_team||!payload.pick||!payload.match_date)return showMsg2('vm','er','Fill required fields');
+  try{const res=await fetch(`${API}/api/picks/vip`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});if(res.ok){showMsg2('vm','ok','✅ VIP pick added!');}else{const d=await res.json();showMsg2('vm','er',d.error||'Error');}}catch(e){showMsg2('vm','er','Server error');}
+}
+
+async function addAccumulator(){
   const linesRaw=document.getElementById('acp').value.trim();
-  if(!linesRaw) return showMsg2('acm','er','Enter picks');
+  if(!linesRaw)return showMsg2('acm','er','Enter picks');
   const picks=linesRaw.split('\n').map(l=>{const p=l.split('|').map(x=>x.trim());return{match:p[0]||'',pick:p[1]||'',odds:p[2]||''};}).filter(p=>p.match);
   const payload={title:document.getElementById('act').value.trim(),total_odds:parseFloat(document.getElementById('aco').value)||0,match_date:document.getElementById('acd').value,picks};
-  if(!payload.title||!payload.match_date) return showMsg2('acm','er','Fill required fields');
-  try {
-    const res=await fetch(`${API}/api/accumulators`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});
-    if(res.ok){showMsg2('acm','ok','✅ Accumulator added!');loadAccumulators();}
-    else{const d=await res.json();showMsg2('acm','er',d.error||'Error');}
-  } catch(e){showMsg2('acm','er','Server error');}
+  if(!payload.title||!payload.match_date)return showMsg2('acm','er','Fill required fields');
+  try{const res=await fetch(`${API}/api/accumulators`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});if(res.ok){showMsg2('acm','ok','✅ Accumulator added!');loadAccumulators();}else{const d=await res.json();showMsg2('acm','er',d.error||'Error');}}catch(e){showMsg2('acm','er','Server error');}
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function showPage(p){
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  if(p==='vip') loadVIPPicks();
-  if(p==='acca') loadAccumulators();
-  if(p==='results') loadResults();
-  if(p==='admin') loadAdminData();
-}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');if(p==='vip')loadVIPPicks();if(p==='acca')loadAccumulators();if(p==='results')loadResults();if(p==='admin')loadAdminData();}
 function setTab(el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
 function so(btn){btn.closest('.or').querySelectorAll('.ob').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
 function openAuth(tab='login'){document.getElementById('authModal').classList.add('show');switchAuth(tab);}
 function closeAuth(){document.getElementById('authModal').classList.remove('show');}
-function switchAuth(tab){
-  document.getElementById('lf').style.display=tab==='login'?'':'none';
-  document.getElementById('rf').style.display=tab==='register'?'':'none';
-  document.getElementById('lt').classList.toggle('active',tab==='login');
-  document.getElementById('rt').classList.toggle('active',tab==='register');
-  document.getElementById('resend-wrap').style.display='none';
-}
+function switchAuth(tab){document.getElementById('lf').style.display=tab==='login'?'':'none';document.getElementById('rf').style.display=tab==='register'?'':'none';document.getElementById('lt').classList.toggle('active',tab==='login');document.getElementById('rt2').classList.toggle('active',tab==='register');document.getElementById('resend-wrap').style.display='none';}
 function showErr(id,msg){const el=document.getElementById(id);el.className='msg er';el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',5000);}
 function showMsg2(id,type,msg){const el=document.getElementById(id);el.className='msg '+type;el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
 function toast(msg,isErr=false){const el=document.createElement('div');el.className='toast'+(isErr?' er':'');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
